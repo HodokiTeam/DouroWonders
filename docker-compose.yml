@@ -1,0 +1,26 @@
+services:
+  site:
+    build:
+      context: .
+      args:
+        # Baked into the client bundle at build time, so it has to be the real
+        # public URL — rebuild the image if the domain changes.
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+    image: douro-wonders-site
+    restart: unless-stopped
+    ports:
+      - '${PORT:-3000}:3000'
+    environment:
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET in .env}
+      BYTEFORMS_API_URL: ${BYTEFORMS_API_URL:-}
+      BYTEFORMS_API_KEY: ${BYTEFORMS_API_KEY:-}
+    volumes:
+      # The live database and the CMS uploads. Never delete these — they hold
+      # everything the founders edit after the first deploy.
+      - douro-data:/app/data
+      - douro-media:/app/media
+
+volumes:
+  douro-data:
+  douro-media:
