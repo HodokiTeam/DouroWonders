@@ -574,3 +574,12 @@
 #25 exporting manifest list sha256:73d60dee34186bff81de215854db0a5418c5efe315a6164c3724e3bbfc85e412 0.0s done
 #25 naming to docker.io/library/douro-wonders-site:test 0.0s done
 #25 unpacking to docker.io/library/douro-wonders-site:test
+#25 unpacking to docker.io/library/douro-wonders-site:test 31.7s done
+#25 ERROR: failed to extract layer sha256:2f7d1518252f8a19ca7e078eff53e0ed470589c2eb48a15ea60ce46c55819ead: write /var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/173/fs/app/node_modules/next/dist/esm/next-devtools/server/dev-indicator-middleware.js.map: read-only file system
+------
+ > exporting to image:
+------
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "PAYLOAD_SECRET") (line 28)
+ERROR: failed to build: failed to solve: Unavailable: error reading from server: EOF

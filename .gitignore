@@ -59,6 +59,8 @@ node_modules/
 /tr.txt
 /upd.txt
 /payload.db.backup
+/payload.db.prepush-backup
+/docker-build.log
 
 # NOTE: payload.db and /media are deliberately committed. They are the seed
 # content and the uploaded images the site renders; on the server both are

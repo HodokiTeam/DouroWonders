@@ -25,8 +25,10 @@ COPY . .
 ARG NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
 ENV DATABASE_URL=file:./payload.db
-ENV PAYLOAD_SECRET=build-time-placeholder-not-used-at-runtime
-RUN npm run build
+# PAYLOAD_SECRET is scoped to this one command rather than set with ENV, so no
+# placeholder is left behind in the image metadata. The real one comes from the
+# environment at runtime.
+RUN PAYLOAD_SECRET=build-time-placeholder npm run build
 
 # NOTE: `npm prune --omit=dev` would cut the image down a few hundred MB, but
 # `next start` still loads next.config.ts and so needs typescript at runtime.
