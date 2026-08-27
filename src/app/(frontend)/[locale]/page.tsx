@@ -510,8 +510,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
           <div className="map-embed">
             <iframe
-              title="Douro Marina — meeting point map"
-              src="https://www.google.com/maps?q=Douro+Marina,+Rua+da+Praia+430,+4400-554+Vila+Nova+de+Gaia&output=embed"
+              title="Douro Wonders — meeting point map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2738.552023923769!2d-8.652937472880195!3d41.14224762933593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd2465d7be3f7e91%3A0xcb3ec2ec26c38215!2sDouro%20Wonders%20-%20Authentic%20Experiences%20-%20Daytime%20%26%20Sunset%20River%20Boat%20Cruise!5e1!3m2!1spt-PT!2spt!4v1787863962258!5m2!1spt-PT!2spt"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
