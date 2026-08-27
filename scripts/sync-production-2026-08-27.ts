@@ -9,7 +9,7 @@
  *   node --experimental-strip-types /app/scripts/sync-production-2026-08-27.ts
  */
 import { getPayload } from 'payload'
-import config from './src/payload.config.ts'
+import config from '../src/payload.config.ts'
 
 const payload = await getPayload({ config })
 
