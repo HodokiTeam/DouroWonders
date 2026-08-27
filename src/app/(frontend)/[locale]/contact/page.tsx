@@ -83,7 +83,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             {!!settings?.phones?.length && <p className="contact-callcost">{dict.footer.callCost}</p>}
           </div>
           <div className="booking-panel">
-            <h2 style={{ marginBottom: '1.2rem' }}>{dict.contact.sendMessage}</h2>
+            <h2 className="booking-panel__title">{dict.contact.sendMessage}</h2>
             <ContactForm dict={dict.contact} privacyHref={`/${locale}/privacy-policy`} />
           </div>
         </div>

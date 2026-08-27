@@ -52,7 +52,7 @@ export function ContactSection({ locale, dict, email, whatsapp, phones }: Props)
           {!!phones?.length && <p className="contact-callcost">{dict.footer.callCost}</p>}
         </div>
         <div className="booking-panel">
-          <h3 style={{ marginBottom: '1.2rem' }}>{dict.contact.sendMessage}</h3>
+          <h3 className="booking-panel__title">{dict.contact.sendMessage}</h3>
           <ContactForm dict={dict.contact} privacyHref={`/${locale}/privacy-policy`} />
         </div>
       </div>

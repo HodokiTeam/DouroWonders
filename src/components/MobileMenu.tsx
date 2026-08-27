@@ -37,11 +37,12 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
 
   const links: Array<{ href: string; label: string; internal?: boolean }> = [
     { href: `${base}#experiences`, label: dict.nav.experiences },
-    { href: `${base}#boat`, label: dict.nav.boat },
     { href: `${base}#route`, label: dict.nav.route },
-    { href: `${base}/blog`, label: dict.nav.blog, internal: true },
-    { href: `${base}#faq`, label: dict.nav.faq },
+    { href: `${base}#boat`, label: dict.nav.boat },
     { href: `${base}/about`, label: dict.nav.about, internal: true },
+    { href: `${base}/special-occasions`, label: dict.nav.specialOccasions, internal: true },
+    { href: `${base}#faq`, label: dict.nav.faq },
+    { href: `${base}/blog`, label: dict.nav.blog, internal: true },
   ]
 
   return (

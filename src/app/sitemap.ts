@@ -25,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ['', 1, 'weekly'],
     ['/blog', 0.8, 'weekly'],
     ['/about', 0.7, 'monthly'],
+    ['/special-occasions', 0.7, 'monthly'],
     ['/contact', 0.6, 'monthly'],
     ['/cancellation-policy', 0.3, 'yearly'],
     ['/privacy-policy', 0.2, 'yearly'],
@@ -51,6 +52,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       entries.push(
         ...localizedEntries(`/${exp.slug}`, {
           priority: 0.9,
+          changeFrequency: 'weekly',
+          lastModified: exp.updatedAt ? new Date(exp.updatedAt) : undefined,
+        }),
+        ...localizedEntries(`/${exp.slug}-private`, {
+          priority: 0.8,
           changeFrequency: 'weekly',
           lastModified: exp.updatedAt ? new Date(exp.updatedAt) : undefined,
         }),

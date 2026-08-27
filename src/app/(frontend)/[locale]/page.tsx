@@ -39,6 +39,23 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const experiences = experiencesRes.docs as Experience[]
   const faqs = faqsRes.docs
 
+  // Grouped under fixed headings — the section itself isn't localized (it's
+  // structural, not editorial), so the label comes from the dictionary.
+  const FAQ_SECTION_ORDER = ['booking', 'meeting-point', 'getting-here', 'onboard', 'guests', 'weather'] as const
+  const faqSectionLabel: Record<(typeof FAQ_SECTION_ORDER)[number], string> = {
+    booking: dict.faqSections.booking,
+    'meeting-point': dict.faqSections.meetingPoint,
+    'getting-here': dict.faqSections.gettingHere,
+    onboard: dict.faqSections.onboard,
+    guests: dict.faqSections.guests,
+    weather: dict.faqSections.weather,
+  }
+  const faqGroups = FAQ_SECTION_ORDER.map((key) => ({
+    key,
+    label: faqSectionLabel[key],
+    items: faqs.filter((f) => (f.section || 'booking') === key),
+  })).filter((g) => g.items.length > 0)
+
   // The route map labels its points from each cruise's itinerary in the CMS
   const itineraryOf = (slug: string) =>
     experiences.find((e) => e.slug === slug)?.details?.itinerary?.map((s) => s.stop) ?? undefined
@@ -47,10 +64,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // Two category rows built from the 2 experiences (shared + private rate each)
   type Card = {
     key: string
+    variant: 'shared' | 'private'
     title: string
     subtitle?: string | null
     duration: string
-    schedule: string | null
     priceNow?: number | null
     priceRef?: number | null
     priceUnit: string
@@ -62,10 +79,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const sharedCards: Card[] = experiences.map((exp) => ({
     key: `${exp.slug}-shared`,
+    variant: 'shared',
     title: exp.title,
     subtitle: exp.subtitle,
     duration: exp.duration,
-    schedule: (exp.schedule || []).map((s) => s.time).join(' | '),
     priceNow: exp.shared?.launchPrice,
     priceRef: campaignActive ? exp.shared?.referencePrice : null,
     priceUnit: dict.hero.perPerson,
@@ -76,20 +93,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }))
   const privateCards: Card[] = experiences.map((exp) => ({
     key: `${exp.slug}-private`,
+    variant: 'private',
     title: exp.private?.subtitle || `${dict.hero.privateCruise} · ${exp.title}`,
     subtitle: exp.private?.subtitle,
     duration: exp.duration,
-    schedule: null,
     priceNow: exp.private?.launchPrice,
     priceRef: null,
     priceUnit: dict.hero.perBoat,
     copy: exp.private?.shortCopy,
     cta: exp.private?.ctaLabel,
-    href: `${base}/${exp.slug}#private`,
+    href: `${base}/${exp.slug}-private`,
     image: mediaUrl(exp.imagePrivate, mediaUrl(exp.image)),
   }))
   const renderCard = (card: Card) => (
-    <article className="card" key={card.key}>
+    <article className={`card exp-card exp-card--${card.variant}`} key={card.key}>
       <Link href={card.href} className="exp-card__img">
         <img src={card.image} alt={card.subtitle || card.title || ''} loading="lazy" />
       </Link>
@@ -97,14 +114,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <h3 className="exp-card__title">{card.title}</h3>
         <div className="exp-card__meta">
           <span>{card.duration}</span>
-          {card.schedule && <span>{card.schedule}</span>}
         </div>
         <div className="exp-card__price">
           {card.priceRef ? <s>€{card.priceRef}</s> : null}€{card.priceNow}{' '}
           <small style={{ fontWeight: 300, color: 'var(--muted-grey)' }}>{card.priceUnit}</small>
         </div>
         <p className="exp-card__copy">{card.copy}</p>
-        <Link href={card.href} className="btn btn--primary">
+        <Link href={card.href} className={`btn ${card.variant === 'private' ? 'btn--secondary' : 'btn--primary'}`}>
           {card.cta || dict.common.bookNow}
         </Link>
       </div>
@@ -301,7 +317,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 5 · What's included */}
-      <section className="section section--white" id="included">
+      <section className="section" id="included">
         <div className="container">
           <p className="eyebrow">{dict.sections.onboard}</p>
           <h2 className="section-title">{home?.included?.title || 'What’s included'}</h2>
@@ -384,7 +400,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               />
             </div>
             <div>
-              <p className="person__intro">This is Inês</p>
+              <p className="person__intro">This is</p>
               <h3 style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', marginBottom: '0.4rem' }}>
                 {home?.founders?.ines?.name || 'Inês Veloso'}
               </h3>
@@ -410,7 +426,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               />
             </div>
             <div>
-              <p className="person__intro">And this is António</p>
+              <p className="person__intro">And this is</p>
               <h3 style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', marginBottom: '0.4rem' }}>
                 {home?.founders?.antonio?.name || 'António Ferrer'}
               </h3>
@@ -428,17 +444,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 9 · FAQ */}
-      <section className="section section--white" id="faq">
+      <section className="section" id="faq">
         <div className="container">
           <p className="eyebrow">{dict.sections.goodToKnow}</p>
           <h2 className="section-title">{home?.faqSection?.title || 'Frequently asked questions'}</h2>
           {home?.faqSection?.lead && <p className="section-lead">{home.faqSection.lead}</p>}
           <div className="faq-list">
-            {faqs.map((faq) => (
-              <details className="faq-item" key={faq.id}>
-                <summary>{faq.question}</summary>
-                <p>{faq.answer}</p>
-              </details>
+            {faqGroups.map((group) => (
+              <div className="faq-group" key={group.key}>
+                <h3 className="faq-group__title">{group.label}</h3>
+                {group.items.map((faq) => (
+                  <details className="faq-item" key={faq.id}>
+                    <summary>{faq.question}</summary>
+                    <p>{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
             ))}
           </div>
         </div>

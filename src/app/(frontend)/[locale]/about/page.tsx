@@ -97,7 +97,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <img src={mediaUrl(f?.ines?.photo, '/images/ines-helm.png')} alt={f?.ines?.name || 'Inês Veloso'} />
             </div>
             <div>
-              <p className="person__intro">This is Inês</p>
+              <p className="person__intro">This is</p>
               <h2>{f?.ines?.name || 'Inês Veloso'}</h2>
               <p className="person__role">{f?.ines?.role || 'Guest experience & creative direction'}</p>
               <p>
@@ -120,7 +120,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               />
             </div>
             <div>
-              <p className="person__intro">And this is António</p>
+              <p className="person__intro">And this is</p>
               <h2>{f?.antonio?.name || 'António Ferrer'}</h2>
               <p className="person__role">{f?.antonio?.role || 'Skipper — navigation & safety'}</p>
               <p>

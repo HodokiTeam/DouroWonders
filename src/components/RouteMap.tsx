@@ -392,7 +392,7 @@ export function RouteMap({
             onClick={() => select(i)}
           >
             <span className="routemap__chip-num">{i + 1}</span>
-            {s.name}
+            <span className="routemap__chip-label">{s.name}</span>
           </button>
         ))}
       </div>

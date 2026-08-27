@@ -54,7 +54,7 @@ export function HeroCinematic({
       const rect = media.getBoundingClientRect()
       const vh = window.innerHeight || 1
       const progress = (vh / 2 - (rect.top + rect.height / 2)) / vh
-      layer.style.transform = `translate3d(0, ${progress * 34}px, 0) scale(1.08)`
+      layer.style.transform = `translate3d(0, ${progress * 24}px, 0) scale(1.08)`
     }
     const schedule = () => {
       if (!raf) raf = requestAnimationFrame(apply)
@@ -74,97 +74,83 @@ export function HeroCinematic({
   const afterTitle = 0.25 + words.length * 0.07
 
   return (
-    <section className="hero-cine">
-      <div className="container hero-cine__grid">
-        {/* Copy — left column */}
-        <div className="hero-cine__content">
-          <p className="hero-cine__eyebrow reveal" style={{ animationDelay: '0.05s' }}>
+    <section className="hero-full">
+      {/* Photograph carousel, full-bleed behind everything */}
+      <div className="hero-full__media" ref={mediaRef}>
+        <div className="hero-full__layer" ref={layerRef} aria-hidden="true">
+          {slides.map((s, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={s.src}
+              src={s.src}
+              alt=""
+              className={i === active ? 'is-active' : ''}
+              loading={i ? 'lazy' : 'eager'}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="container">
+        <div className="hero-full__content">
+          <p className="hero-full__eyebrow reveal" style={{ animationDelay: '0.05s' }}>
             {eyebrow}
           </p>
 
-          <h1 className="hero-cine__title">
+          <h1 className="hero-full__title">
             {words.map((w, i) => (
               <React.Fragment key={`${w}-${i}`}>
                 {i > 0 ? ' ' : null}
-                <span className="hero-cine__word">
+                <span className="hero-full__word">
                   <span style={{ animationDelay: `${0.18 + i * 0.07}s` }}>{w}</span>
                 </span>
               </React.Fragment>
             ))}
           </h1>
 
-          <p className="hero-cine__sub reveal" style={{ animationDelay: `${afterTitle}s` }}>
+          <p className="hero-full__sub reveal" style={{ animationDelay: `${afterTitle}s` }}>
             {subheadline}
           </p>
 
-          <div className="hero-cine__rule reveal" style={{ animationDelay: `${afterTitle + 0.08}s` }} />
-
-          {/* Rates — typographic, no boxes */}
-          <div className="hero-cine__rates reveal" style={{ animationDelay: `${afterTitle + 0.14}s` }}>
+          <div className="hero-full__rates reveal" style={{ animationDelay: `${afterTitle + 0.06}s` }}>
             {rates.map((r) => (
-              <a key={r.label} href={r.href} className="hero-cine__rate">
-                <span className="hero-cine__rate-label">{r.label}</span>
-                <span className="hero-cine__rate-price">
-                  {r.price}
-                  <i aria-hidden="true">/</i>
-                </span>
-                <span className="hero-cine__rate-unit">{r.unit}</span>
-                <span className="hero-cine__rate-note">{r.note}</span>
+              <a key={r.label} href={r.href} className="hero-full__rate">
+                {r.label}: <b>{r.price}</b> {r.unit}
               </a>
             ))}
           </div>
 
-          <div className="hero-cine__rule reveal" style={{ animationDelay: `${afterTitle + 0.2}s` }} />
-
-          <div className="hero-cine__actions reveal" style={{ animationDelay: `${afterTitle + 0.26}s` }}>
+          <div className="hero-full__actions reveal" style={{ animationDelay: `${afterTitle + 0.12}s` }}>
             <a href={ctaHref} className="btn btn--primary">
               {primaryCta}
             </a>
-            <a href={ctaHref} className="hero-cine__textlink">
-              {secondaryCta} <span aria-hidden="true">→</span>
+            <a href={ctaHref} className="btn btn--outline-light">
+              {secondaryCta}
             </a>
           </div>
 
-          <ul className="hero-cine__trust reveal" style={{ animationDelay: `${afterTitle + 0.32}s` }}>
+          <ul className="hero-full__trust reveal" style={{ animationDelay: `${afterTitle + 0.18}s` }}>
             {trust.map((t) => (
               <li key={t}>{t}</li>
             ))}
           </ul>
         </div>
+      </div>
 
-        {/* Photograph — right column, framed portrait */}
-        <figure className="hero-cine__media" ref={mediaRef}>
-          <div className="hero-cine__frame">
-            <div className="hero-cine__layer" ref={layerRef} aria-hidden="true">
-              {slides.map((s, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={s.src}
-                  src={s.src}
-                  alt=""
-                  className={i === active ? 'is-active' : ''}
-                  loading={i ? 'lazy' : 'eager'}
-                />
-              ))}
-            </div>
-          </div>
-
-          <figcaption className="hero-cine__caption">
-            <span>{slides[active]?.caption ?? slides[active]?.alt}</span>
-            <span className="hero-cine__dots" role="tablist" aria-label="Photos">
-              {slides.map((s, i) => (
-                <button
-                  key={s.src}
-                  role="tab"
-                  aria-selected={i === active}
-                  aria-label={s.alt}
-                  className={i === active ? 'is-active' : ''}
-                  onClick={() => setActive(i)}
-                />
-              ))}
-            </span>
-          </figcaption>
-        </figure>
+      <div className="hero-full__caption">
+        <span>{slides[active]?.caption ?? slides[active]?.alt}</span>
+        <span className="hero-full__dots" role="tablist" aria-label="Photos">
+          {slides.map((s, i) => (
+            <button
+              key={s.src}
+              role="tab"
+              aria-selected={i === active}
+              aria-label={s.alt}
+              className={i === active ? 'is-active' : ''}
+              onClick={() => setActive(i)}
+            />
+          ))}
+        </span>
       </div>
     </section>
   )

@@ -13,6 +13,7 @@ export type Dictionary = {
     faq: string
     about: string
     blog: string
+    specialOccasions: string
     bookNow: string
   }
   hero: {
@@ -38,6 +39,14 @@ export type Dictionary = {
     contact: string
     gallery: string
     blog: string
+  }
+  faqSections: {
+    booking: string
+    meetingPoint: string
+    gettingHere: string
+    onboard: string
+    guests: string
+    weather: string
   }
   detail: {
     duration: string
@@ -65,6 +74,37 @@ export type Dictionary = {
     customDetails: string
     speakWithUs: string
     openInMaps: string
+    orPrivateTitle: string
+    orPrivateCta: string
+    orSharedTitle: string
+    orSharedCta: string
+  }
+  privateEnquiry: {
+    eyebrow: string
+    title: string
+    moreLink: string
+    ctaButton: string
+    body: string
+    perk1: string
+    perk2: string
+    perk3: string
+    eventsNote: string
+    cruise: string
+    cruiseDay: string
+    cruiseSunset: string
+    cruiseUnsure: string
+    date: string
+    guests: string
+    guestsPlaceholder: string
+    occasion: string
+    occasionPlaceholder: string
+    extras: string
+    extrasPlaceholder: string
+    messagePlaceholder: string
+    consent: string
+    send: string
+    sentTitle: string
+    sentBody: string
   }
   contact: {
     title: string
@@ -76,7 +116,10 @@ export type Dictionary = {
     name: string
     subject: string
     message: string
+    namePlaceholder: string
+    emailPlaceholder: string
     subjectPlaceholder: string
+    messagePlaceholder: string
     send: string
     sending: string
     sentTitle: string
@@ -84,6 +127,7 @@ export type Dictionary = {
     error: string
     privacy: string
     privacyLink: string
+    consent: string
   }
   footer: {
     tagline: string
@@ -122,6 +166,7 @@ const en: Dictionary = {
     faq: 'FAQ',
     about: 'About',
     blog: 'Blog',
+    specialOccasions: 'Special Occasions',
     bookNow: 'Book Now',
   },
   hero: { sharedCruise: 'Shared cruise', privateCruise: 'Private cruise', perPerson: 'per person', perBoat: 'per boat', from: 'from', eyebrow: 'The Douro — No.01' },
@@ -144,6 +189,14 @@ const en: Dictionary = {
     contact: 'Contact',
     gallery: 'Gallery',
     blog: 'Blog',
+  },
+  faqSections: {
+    booking: 'Booking & the cruise',
+    meetingPoint: 'Meeting point',
+    gettingHere: 'Getting here',
+    onboard: 'Onboard',
+    guests: 'Guests & accessibility',
+    weather: 'Weather & seasonality',
   },
   detail: {
     duration: 'Duration',
@@ -171,6 +224,37 @@ const en: Dictionary = {
     customDetails: 'For special occasions or custom details,',
     speakWithUs: 'speak with us before booking',
     openInMaps: 'Open in Google Maps',
+    orPrivateTitle: 'Or have a private experience — just for your group',
+    orPrivateCta: 'See the private cruise',
+    orSharedTitle: 'Prefer to share it with others?',
+    orSharedCta: 'See the shared cruise',
+  },
+  privateEnquiry: {
+    eyebrow: 'Private cruise',
+    title: 'Prefer it just for you?',
+    moreLink: 'Planning something special?',
+    ctaButton: 'Plan something special',
+    body: 'The whole boat, exclusively for your group — at your own pace, with personal touches, to make the river yours for an afternoon or an evening.',
+    perk1: 'The whole boat, just your group',
+    perk2: 'Flexible timing, within availability',
+    perk3: 'Add extras — flowers, cake, a photographer and more',
+    eventsNote: 'Planning a proposal, a wedding toast or another celebration onboard? Tell us below and we’ll help you plan it.',
+    cruise: 'Which cruise?',
+    cruiseDay: 'Day Cruise',
+    cruiseSunset: 'Sunset Cruise',
+    cruiseUnsure: 'Not sure yet',
+    date: 'Preferred date',
+    guests: 'Number of guests',
+    guestsPlaceholder: 'e.g. 8',
+    occasion: 'Occasion',
+    occasionPlaceholder: 'Proposal, birthday, anniversary…',
+    extras: 'Optional extras',
+    extrasPlaceholder: 'Flowers, cake, photographer…',
+    messagePlaceholder: 'Anything else we should know?',
+    consent: 'I agree to be contacted by Douro Wonders about my private enquiry. I have read the',
+    send: 'Send enquiry',
+    sentTitle: 'Enquiry sent — thank you!',
+    sentBody: 'We’ll get back to you with private cruise options, usually within a day.',
   },
   contact: {
     title: 'Questions, or something special in mind?',
@@ -182,7 +266,10 @@ const en: Dictionary = {
     name: 'Name',
     subject: 'Subject',
     message: 'Message',
+    namePlaceholder: 'Your name',
+    emailPlaceholder: 'you@example.com',
     subjectPlaceholder: 'e.g. Birthday on board, group of 8…',
+    messagePlaceholder: 'Tell us how we can help…',
     send: 'Send Message',
     sending: 'Sending…',
     sentTitle: 'Message sent — thank you!',
@@ -190,6 +277,7 @@ const en: Dictionary = {
     error: 'Something went wrong. Please try again or email us directly.',
     privacy: 'By sending this message you agree to our',
     privacyLink: 'privacy policy',
+    consent: 'I agree to be contacted by Douro Wonders about my enquiry. I have read the',
   },
   footer: {
     tagline:
@@ -235,6 +323,7 @@ const pt: Dictionary = {
     faq: 'FAQ',
     about: 'Sobre nós',
     blog: 'Blog',
+    specialOccasions: 'Ocasiões Especiais',
     bookNow: 'Reservar',
   },
   hero: { sharedCruise: 'Cruzeiro partilhado', privateCruise: 'Cruzeiro privado', perPerson: 'por pessoa', perBoat: 'por embarcação', from: 'desde', eyebrow: 'O Douro — No.01' },
@@ -257,6 +346,14 @@ const pt: Dictionary = {
     contact: 'Contacto',
     gallery: 'Galeria',
     blog: 'Blog',
+  },
+  faqSections: {
+    booking: 'Reserva e o cruzeiro',
+    meetingPoint: 'Ponto de encontro',
+    gettingHere: 'Como chegar',
+    onboard: 'A bordo',
+    guests: 'Hóspedes e acessibilidade',
+    weather: 'Meteorologia e época',
   },
   detail: {
     duration: 'Duração',
@@ -285,6 +382,37 @@ const pt: Dictionary = {
     customDetails: 'Para ocasiões especiais ou detalhes personalizados,',
     speakWithUs: 'fale connosco antes de reservar',
     openInMaps: 'Abrir no Google Maps',
+    orPrivateTitle: 'Ou tenha uma experiência privada — só para o seu grupo',
+    orPrivateCta: 'Ver o cruzeiro privado',
+    orSharedTitle: 'Prefere partilhar com outros?',
+    orSharedCta: 'Ver o cruzeiro partilhado',
+  },
+  privateEnquiry: {
+    eyebrow: 'Cruzeiro privado',
+    title: 'Prefere só para si?',
+    moreLink: 'A planear algo especial?',
+    ctaButton: 'Planear algo especial',
+    body: 'A embarcação toda, exclusivamente para o seu grupo — ao seu ritmo, com toques pessoais, para fazer do rio seu por uma tarde ou uma noite.',
+    perk1: 'A embarcação toda, só para o seu grupo',
+    perk2: 'Horário flexível, consoante disponibilidade',
+    perk3: 'Acrescente extras — flores, bolo, fotógrafo e mais',
+    eventsNote: 'A planear um pedido de casamento, um brinde ou outra celebração a bordo? Diga-nos abaixo e ajudamos a planear.',
+    cruise: 'Que cruzeiro?',
+    cruiseDay: 'Cruzeiro Diurno',
+    cruiseSunset: 'Cruzeiro Pôr do Sol',
+    cruiseUnsure: 'Ainda não sei',
+    date: 'Data preferida',
+    guests: 'Número de convidados',
+    guestsPlaceholder: 'ex.: 8',
+    occasion: 'Ocasião',
+    occasionPlaceholder: 'Pedido de casamento, aniversário…',
+    extras: 'Extras opcionais',
+    extrasPlaceholder: 'Flores, bolo, fotógrafo…',
+    messagePlaceholder: 'Mais alguma coisa que devamos saber?',
+    consent: 'Concordo em ser contactado(a) pela Douro Wonders sobre o meu pedido privado. Li a',
+    send: 'Enviar pedido',
+    sentTitle: 'Pedido enviado — obrigado!',
+    sentBody: 'Entraremos em contacto com opções de cruzeiro privado, normalmente dentro de um dia.',
   },
   contact: {
     title: 'Dúvidas, ou algo especial em mente?',
@@ -296,7 +424,10 @@ const pt: Dictionary = {
     name: 'Nome',
     subject: 'Assunto',
     message: 'Mensagem',
+    namePlaceholder: 'O seu nome',
+    emailPlaceholder: 'oseu@email.com',
     subjectPlaceholder: 'ex.: Aniversário a bordo, grupo de 8…',
+    messagePlaceholder: 'Diga-nos como podemos ajudar…',
     send: 'Enviar mensagem',
     sending: 'A enviar…',
     sentTitle: 'Mensagem enviada — obrigado!',
@@ -304,6 +435,7 @@ const pt: Dictionary = {
     error: 'Algo correu mal. Tente novamente ou envie-nos um email.',
     privacy: 'Ao enviar esta mensagem concorda com a nossa',
     privacyLink: 'política de privacidade',
+    consent: 'Concordo em ser contactado(a) pela Douro Wonders sobre o meu pedido. Li a',
   },
   footer: {
     tagline:
@@ -349,6 +481,7 @@ const fr: Dictionary = {
     faq: 'FAQ',
     about: 'À propos',
     blog: 'Blog',
+    specialOccasions: 'Occasions Spéciales',
     bookNow: 'Réserver',
   },
   hero: { sharedCruise: 'Croisière partagée', privateCruise: 'Croisière privée', perPerson: 'par personne', perBoat: 'par bateau', from: 'à partir de', eyebrow: 'Le Douro — No.01' },
@@ -371,6 +504,14 @@ const fr: Dictionary = {
     contact: 'Contact',
     gallery: 'Galerie',
     blog: 'Blog',
+  },
+  faqSections: {
+    booking: 'Réservation et croisière',
+    meetingPoint: 'Point de rendez-vous',
+    gettingHere: 'Comment venir',
+    onboard: 'À bord',
+    guests: 'Invités et accessibilité',
+    weather: 'Météo et saison',
   },
   detail: {
     duration: 'Durée',
@@ -399,6 +540,37 @@ const fr: Dictionary = {
     customDetails: 'Pour les occasions spéciales ou les demandes particulières,',
     speakWithUs: 'parlez-nous avant de réserver',
     openInMaps: 'Ouvrir dans Google Maps',
+    orPrivateTitle: 'Ou optez pour une expérience privée — rien que pour votre groupe',
+    orPrivateCta: 'Voir la croisière privée',
+    orSharedTitle: 'Vous préférez la partager avec d’autres ?',
+    orSharedCta: 'Voir la croisière partagée',
+  },
+  privateEnquiry: {
+    eyebrow: 'Croisière privée',
+    title: 'Préférez-vous en exclusivité ?',
+    moreLink: 'Vous préparez quelque chose de spécial ?',
+    ctaButton: 'Organiser quelque chose de spécial',
+    body: 'Le bateau entier, exclusivement pour votre groupe — à votre rythme, avec des touches personnelles, pour vous approprier le fleuve le temps d’un après-midi ou d’une soirée.',
+    perk1: 'Le bateau entier, rien que pour votre groupe',
+    perk2: 'Horaire flexible, selon disponibilité',
+    perk3: 'Ajoutez des extras — fleurs, gâteau, photographe et plus',
+    eventsNote: 'Vous préparez une demande en mariage, un toast de mariage ou une autre célébration à bord ? Dites-le-nous ci-dessous, nous vous aiderons à l’organiser.',
+    cruise: 'Quelle croisière ?',
+    cruiseDay: 'Croisière de jour',
+    cruiseSunset: 'Croisière au coucher du soleil',
+    cruiseUnsure: 'Pas encore sûr(e)',
+    date: 'Date souhaitée',
+    guests: 'Nombre d’invités',
+    guestsPlaceholder: 'ex. 8',
+    occasion: 'Occasion',
+    occasionPlaceholder: 'Demande en mariage, anniversaire…',
+    extras: 'Extras optionnels',
+    extrasPlaceholder: 'Fleurs, gâteau, photographe…',
+    messagePlaceholder: 'Autre chose que nous devrions savoir ?',
+    consent: 'J’accepte d’être contacté(e) par Douro Wonders au sujet de ma demande privée. J’ai lu la',
+    send: 'Envoyer la demande',
+    sentTitle: 'Demande envoyée — merci !',
+    sentBody: 'Nous vous recontacterons avec des options de croisière privée, généralement sous un jour.',
   },
   contact: {
     title: 'Des questions, ou une idée particulière ?',
@@ -410,7 +582,10 @@ const fr: Dictionary = {
     name: 'Nom',
     subject: 'Sujet',
     message: 'Message',
+    namePlaceholder: 'Votre nom',
+    emailPlaceholder: 'vous@exemple.com',
     subjectPlaceholder: 'ex. : Anniversaire à bord, groupe de 8…',
+    messagePlaceholder: 'Dites-nous comment nous pouvons vous aider…',
     send: 'Envoyer le message',
     sending: 'Envoi…',
     sentTitle: 'Message envoyé — merci !',
@@ -418,6 +593,7 @@ const fr: Dictionary = {
     error: 'Une erreur est survenue. Réessayez ou envoyez-nous un email.',
     privacy: 'En envoyant ce message, vous acceptez notre',
     privacyLink: 'politique de confidentialité',
+    consent: 'J’accepte d’être contacté(e) par Douro Wonders au sujet de ma demande. J’ai lu la',
   },
   footer: {
     tagline:
@@ -463,6 +639,7 @@ const es: Dictionary = {
     faq: 'FAQ',
     about: 'Nosotros',
     blog: 'Blog',
+    specialOccasions: 'Ocasiones Especiales',
     bookNow: 'Reservar',
   },
   hero: { sharedCruise: 'Crucero compartido', privateCruise: 'Crucero privado', perPerson: 'por persona', perBoat: 'por barco', from: 'desde', eyebrow: 'El Duero — No.01' },
@@ -485,6 +662,14 @@ const es: Dictionary = {
     contact: 'Contacto',
     gallery: 'Galería',
     blog: 'Blog',
+  },
+  faqSections: {
+    booking: 'Reserva y el crucero',
+    meetingPoint: 'Punto de encuentro',
+    gettingHere: 'Cómo llegar',
+    onboard: 'A bordo',
+    guests: 'Huéspedes y accesibilidad',
+    weather: 'Clima y temporada',
   },
   detail: {
     duration: 'Duración',
@@ -513,6 +698,37 @@ const es: Dictionary = {
     customDetails: 'Para ocasiones especiales o detalles personalizados,',
     speakWithUs: 'habla con nosotros antes de reservar',
     openInMaps: 'Abrir en Google Maps',
+    orPrivateTitle: 'O ten una experiencia privada — solo para tu grupo',
+    orPrivateCta: 'Ver el crucero privado',
+    orSharedTitle: '¿Prefieres compartirlo con otros?',
+    orSharedCta: 'Ver el crucero compartido',
+  },
+  privateEnquiry: {
+    eyebrow: 'Crucero privado',
+    title: '¿Prefieres solo para ti?',
+    moreLink: '¿Planeando algo especial?',
+    ctaButton: 'Planear algo especial',
+    body: 'El barco entero, exclusivamente para tu grupo — a tu ritmo, con toques personales, para hacer del río tuyo durante una tarde o una noche.',
+    perk1: 'El barco entero, solo para tu grupo',
+    perk2: 'Horario flexible, según disponibilidad',
+    perk3: 'Añade extras — flores, tarta, fotógrafo y más',
+    eventsNote: '¿Estás planeando una pedida de mano, un brindis de boda u otra celebración a bordo? Cuéntanoslo abajo y te ayudamos a planificarlo.',
+    cruise: '¿Qué crucero?',
+    cruiseDay: 'Crucero Diurno',
+    cruiseSunset: 'Crucero Atardecer',
+    cruiseUnsure: 'Aún no lo sé',
+    date: 'Fecha preferida',
+    guests: 'Número de invitados',
+    guestsPlaceholder: 'p. ej. 8',
+    occasion: 'Ocasión',
+    occasionPlaceholder: 'Pedida de mano, cumpleaños…',
+    extras: 'Extras opcionales',
+    extrasPlaceholder: 'Flores, tarta, fotógrafo…',
+    messagePlaceholder: '¿Algo más que debamos saber?',
+    consent: 'Acepto ser contactado/a por Douro Wonders sobre mi solicitud privada. He leído la',
+    send: 'Enviar solicitud',
+    sentTitle: 'Solicitud enviada — ¡gracias!',
+    sentBody: 'Te responderemos con opciones de crucero privado, normalmente en un día.',
   },
   contact: {
     title: '¿Preguntas, o algo especial en mente?',
@@ -524,7 +740,10 @@ const es: Dictionary = {
     name: 'Nombre',
     subject: 'Asunto',
     message: 'Mensaje',
+    namePlaceholder: 'Tu nombre',
+    emailPlaceholder: 'tu@ejemplo.com',
     subjectPlaceholder: 'p. ej.: Cumpleaños a bordo, grupo de 8…',
+    messagePlaceholder: 'Cuéntanos cómo podemos ayudarte…',
     send: 'Enviar mensaje',
     sending: 'Enviando…',
     sentTitle: 'Mensaje enviado — ¡gracias!',
@@ -532,6 +751,7 @@ const es: Dictionary = {
     error: 'Algo salió mal. Inténtalo de nuevo o escríbenos un email.',
     privacy: 'Al enviar este mensaje aceptas nuestra',
     privacyLink: 'política de privacidad',
+    consent: 'Acepto ser contactado/a por Douro Wonders sobre mi solicitud. He leído la',
   },
   footer: {
     tagline:
@@ -577,6 +797,7 @@ const de: Dictionary = {
     faq: 'FAQ',
     about: 'Über uns',
     blog: 'Blog',
+    specialOccasions: 'Besondere Anlässe',
     bookNow: 'Buchen',
   },
   hero: { sharedCruise: 'Gemeinsame Fahrt', privateCruise: 'Private Fahrt', perPerson: 'pro Person', perBoat: 'pro Boot', from: 'ab', eyebrow: 'Der Douro — Nr.01' },
@@ -599,6 +820,14 @@ const de: Dictionary = {
     contact: 'Kontakt',
     gallery: 'Galerie',
     blog: 'Blog',
+  },
+  faqSections: {
+    booking: 'Buchung & die Fahrt',
+    meetingPoint: 'Treffpunkt',
+    gettingHere: 'Anreise',
+    onboard: 'An Bord',
+    guests: 'Gäste & Barrierefreiheit',
+    weather: 'Wetter & Saison',
   },
   detail: {
     duration: 'Dauer',
@@ -627,6 +856,37 @@ const de: Dictionary = {
     customDetails: 'Für besondere Anlässe oder individuelle Wünsche',
     speakWithUs: 'sprechen Sie vor der Buchung mit uns',
     openInMaps: 'In Google Maps öffnen',
+    orPrivateTitle: 'Oder eine private Fahrt — nur für Ihre Gruppe',
+    orPrivateCta: 'Private Fahrt ansehen',
+    orSharedTitle: 'Lieber mit anderen teilen?',
+    orSharedCta: 'Gemeinsame Fahrt ansehen',
+  },
+  privateEnquiry: {
+    eyebrow: 'Private Fahrt',
+    title: 'Lieber ganz für sich allein?',
+    moreLink: 'Planen Sie etwas Besonderes?',
+    ctaButton: 'Etwas Besonderes planen',
+    body: 'Das ganze Boot, exklusiv für Ihre Gruppe — in Ihrem eigenen Tempo, mit persönlichen Akzenten, um den Fluss für einen Nachmittag oder Abend ganz für sich zu haben.',
+    perk1: 'Das ganze Boot, nur für Ihre Gruppe',
+    perk2: 'Flexible Zeiten, je nach Verfügbarkeit',
+    perk3: 'Extras hinzufügen — Blumen, Torte, Fotograf und mehr',
+    eventsNote: 'Planen Sie einen Heiratsantrag, einen Hochzeitstoast oder eine andere Feier an Bord? Schreiben Sie es uns unten, wir helfen bei der Planung.',
+    cruise: 'Welche Fahrt?',
+    cruiseDay: 'Day Cruise',
+    cruiseSunset: 'Sunset Cruise',
+    cruiseUnsure: 'Noch unsicher',
+    date: 'Wunschtermin',
+    guests: 'Anzahl der Gäste',
+    guestsPlaceholder: 'z. B. 8',
+    occasion: 'Anlass',
+    occasionPlaceholder: 'Heiratsantrag, Geburtstag…',
+    extras: 'Optionale Extras',
+    extrasPlaceholder: 'Blumen, Torte, Fotograf…',
+    messagePlaceholder: 'Sonst noch etwas, das wir wissen sollten?',
+    consent: 'Ich stimme der Kontaktaufnahme durch Douro Wonders bezüglich meiner privaten Anfrage sowie der',
+    send: 'Anfrage senden',
+    sentTitle: 'Anfrage gesendet — vielen Dank!',
+    sentBody: 'Wir melden uns mit Optionen für eine private Fahrt, meist innerhalb eines Tages.',
   },
   contact: {
     title: 'Fragen oder etwas Besonderes geplant?',
@@ -638,7 +898,10 @@ const de: Dictionary = {
     name: 'Name',
     subject: 'Betreff',
     message: 'Nachricht',
+    namePlaceholder: 'Ihr Name',
+    emailPlaceholder: 'sie@beispiel.com',
     subjectPlaceholder: 'z. B. Geburtstag an Bord, Gruppe von 8…',
+    messagePlaceholder: 'Sagen Sie uns, wie wir helfen können…',
     send: 'Nachricht senden',
     sending: 'Wird gesendet…',
     sentTitle: 'Nachricht gesendet — vielen Dank!',
@@ -646,6 +909,7 @@ const de: Dictionary = {
     error: 'Etwas ist schiefgelaufen. Bitte erneut versuchen oder schreiben Sie uns eine E-Mail.',
     privacy: 'Mit dem Senden dieser Nachricht stimmen Sie unserer',
     privacyLink: 'Datenschutzerklärung zu',
+    consent: 'Ich stimme der Kontaktaufnahme durch Douro Wonders bezüglich meiner Anfrage sowie der',
   },
   footer: {
     tagline:

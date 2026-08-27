@@ -13,6 +13,7 @@ import { Posts } from './collections/Posts'
 import { ContactMessages } from './collections/ContactMessages'
 import { SiteSettings } from './globals/SiteSettings'
 import { Homepage } from './globals/Homepage'
+import { SpecialOccasions } from './globals/SpecialOccasions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -28,7 +29,7 @@ export default buildConfig({
     },
   },
   collections: [Experiences, FAQs, Posts, ContactMessages, Media, Users],
-  globals: [Homepage, SiteSettings],
+  globals: [Homepage, SiteSettings, SpecialOccasions],
   editor: lexicalEditor(),
   localization: {
     locales: [

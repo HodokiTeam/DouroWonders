@@ -13,7 +13,7 @@ const S = {
   strokeLinejoin: 'round' as const,
 }
 
-const icons = {
+export const strokeIcons = {
   cocktail: (
     <svg viewBox="0 0 24 24" {...S}>
       <path d="M4 4h16l-8 9v6" />
@@ -81,7 +81,7 @@ const icons = {
   ),
 }
 
-type IconKey = keyof typeof icons
+type IconKey = keyof typeof strokeIcons
 
 /**
  * Keywords in all five site languages, accent-stripped. Order matters: the
@@ -141,7 +141,7 @@ export function IncludedItem({ text }: { text: string }) {
   return (
     <li>
       <span className="included-icon" aria-hidden="true">
-        {icons[pick(text)]}
+        {strokeIcons[pick(text)]}
       </span>
       <span>{text}</span>
     </li>

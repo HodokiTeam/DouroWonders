@@ -103,10 +103,12 @@ export interface Config {
   globals: {
     homepage: Homepage;
     'site-settings': SiteSetting;
+    'special-occasions': SpecialOccasion;
   };
   globalsSelect: {
     homepage: HomepageSelect<false> | HomepageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'special-occasions': SpecialOccasionsSelect<false> | SpecialOccasionsSelect<true>;
   };
   locale: 'en' | 'pt' | 'fr' | 'es' | 'de';
   widgets: {
@@ -322,9 +324,13 @@ export interface Faq {
   question: string;
   answer: string;
   /**
-   * Sort order (lowest first)
+   * Sort order within its section (lowest first)
    */
   order?: number | null;
+  /**
+   * Groups this question under a heading on the FAQ page.
+   */
+  section?: ('booking' | 'meeting-point' | 'getting-here' | 'onboard' | 'guests' | 'weather') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -619,6 +625,7 @@ export interface FaqsSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
   order?: T;
+  section?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -977,6 +984,28 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "special-occasions".
+ */
+export interface SpecialOccasion {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  intro?: string | null;
+  /**
+   * Short list of occasion ideas shown as bullets, e.g. "Marriage proposals".
+   */
+  ideas?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  image?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage_select".
  */
 export interface HomepageSelect<T extends boolean = true> {
@@ -1149,6 +1178,25 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         rnaat?: T;
         livroReclamacoesUrl?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "special-occasions_select".
+ */
+export interface SpecialOccasionsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  intro?: T;
+  ideas?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -11,6 +11,7 @@ export function ContactForm({
   privacyHref: string
 }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [consent, setConsent] = useState(false)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -41,6 +42,7 @@ export function ContactForm({
       if (!res.ok) throw new Error('failed')
       setStatus('sent')
       form.reset()
+      setConsent(false)
     } catch {
       setStatus('error')
     }
@@ -62,11 +64,11 @@ export function ContactForm({
       <div className="contact-form__row">
         <label>
           {dict.name}
-          <input name="name" type="text" required autoComplete="name" />
+          <input name="name" type="text" required autoComplete="name" placeholder={dict.namePlaceholder} />
         </label>
         <label>
           {dict.email}
-          <input name="email" type="email" required autoComplete="email" />
+          <input name="email" type="email" required autoComplete="email" placeholder={dict.emailPlaceholder} />
         </label>
       </div>
       <label>
@@ -75,7 +77,7 @@ export function ContactForm({
       </label>
       <label>
         {dict.message}
-        <textarea name="message" rows={5} required />
+        <textarea name="message" rows={5} required placeholder={dict.messagePlaceholder} />
       </label>
 
       {/* Anti-spam honeypot — must stay empty */}
@@ -88,6 +90,22 @@ export function ContactForm({
         style={{ display: 'none' }}
       />
 
+      <label className="contact-form__consent">
+        <input
+          type="checkbox"
+          required
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+        />
+        <span>
+          {dict.consent}{' '}
+          <a href={privacyHref} className="link-gold">
+            {dict.privacyLink}
+          </a>
+          .
+        </span>
+      </label>
+
       <button type="submit" className="btn btn--primary" disabled={status === 'sending'}>
         {status === 'sending' ? dict.sending : dict.send}
       </button>
@@ -96,13 +114,6 @@ export function ContactForm({
           {dict.error}
         </p>
       )}
-      <p className="contact-form__privacy">
-        {dict.privacy}{' '}
-        <a href={privacyHref} className="link-gold">
-          {dict.privacyLink}
-        </a>
-        .
-      </p>
     </form>
   )
 }

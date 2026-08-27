@@ -8,33 +8,51 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { BokunWidget } from '@/components/BokunWidget'
 import { ContactSection } from '@/components/ContactSection'
+import { strokeIcons } from '@/components/IncludedIcons'
 import type { Experience, Homepage, Media, SiteSetting } from '@/payload-types'
 import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
 
+type Variant = 'shared' | 'private'
+
+const PRIVATE_SUFFIX = '-private'
+
+/** "/day-cruise-private" books the same Bókun experience as "/day-cruise" —
+    the suffix only picks which side of the page leads. */
+function parseSlug(raw: string): { baseSlug: string; variant: Variant } {
+  if (raw.endsWith(PRIVATE_SUFFIX)) {
+    return { baseSlug: raw.slice(0, -PRIVATE_SUFFIX.length), variant: 'private' }
+  }
+  return { baseSlug: raw, variant: 'shared' }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; locale: string }> }) {
-  const { slug, locale: raw } = await params
-  const locale: Locale = isLocale(raw) ? raw : 'en'
+  const { slug: raw, locale: rawLocale } = await params
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : 'en'
+  const { baseSlug, variant } = parseSlug(raw)
   const payload = await getPayload({ config })
-  const res = await payload.find({ collection: 'experiences', where: { slug: { equals: slug } }, limit: 1, locale })
+  const res = await payload.find({ collection: 'experiences', where: { slug: { equals: baseSlug } }, limit: 1, locale })
   const exp = res.docs[0] as Experience | undefined
   if (!exp) return {}
   const image = mediaUrl(exp.image, '/images/boat-porto-bridge.png')
+  const title = variant === 'private' ? `${exp.subtitle || exp.title} — Private` : exp.subtitle || exp.title
+  const description = (variant === 'private' ? exp.private?.shortCopy : exp.shared?.shortCopy) || undefined
+  const path = variant === 'private' ? `${exp.slug}${PRIVATE_SUFFIX}` : exp.slug
   return {
-    title: exp.subtitle || exp.title,
-    description: exp.shared?.shortCopy || undefined,
+    title,
+    description,
     alternates: {
-      canonical: `/${locale}/${exp.slug}`,
+      canonical: `/${locale}/${path}`,
       languages: {
-        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/${exp.slug}`])),
-        'x-default': `/en/${exp.slug}`,
+        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/${path}`])),
+        'x-default': `/en/${path}`,
       },
     },
     openGraph: {
-      title: exp.subtitle || exp.title,
-      description: exp.shared?.shortCopy || undefined,
+      title,
+      description,
       images: [{ url: image, alt: exp.subtitle || exp.title }],
     },
   }
@@ -48,14 +66,15 @@ const mediaUrl = (m?: (number | null) | Media | null, fallback?: string): string
 }
 
 export default async function ExperiencePage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
-  const { slug, locale: raw } = await params
+  const { slug: rawSlug, locale: raw } = await params
   const locale: Locale = isLocale(raw) ? raw : 'en'
+  const { baseSlug, variant } = parseSlug(rawSlug)
   const dict = getDictionary(locale)
   const base = `/${locale}`
   const payload = await getPayload({ config })
 
   const [expRes, home, settings] = await Promise.all([
-    payload.find({ collection: 'experiences', where: { slug: { equals: slug } }, limit: 1, locale }),
+    payload.find({ collection: 'experiences', where: { slug: { equals: baseSlug } }, limit: 1, locale }),
     payload.findGlobal({ slug: 'homepage', locale }) as Promise<Homepage>,
     payload.findGlobal({ slug: 'site-settings', locale }) as Promise<SiteSetting>,
   ])
@@ -65,10 +84,11 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
 
   const campaignActive = home?.campaign?.active !== false
   const bookingChannelUUID = settings?.bokun?.bookingChannelUUID
-  const schedule = (exp.schedule || []).map((s) => s.time).join(' | ')
   const d = exp.details
-  const email = settings?.email || 'info@dourowonders.com'
   const paragraphs = (d?.fullDescription || '').split(/\n\s*\n/).filter(Boolean)
+
+  const sharedHref = `${base}/${exp.slug}`
+  const privateHref = `${base}/${exp.slug}${PRIVATE_SUFFIX}`
 
   return (
     <>
@@ -110,31 +130,41 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            {/* Facts */}
+            {/* Facts — same thin-stroke icon language as the On Board list */}
             <div className="facts">
               <div className="fact">
-                <div className="fact__icon">⏱</div>
+                <div className="fact__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="M12 7.5V12l3 2" />
+                  </svg>
+                </div>
                 <div>
                   <strong>{dict.detail.duration} {exp.duration}</strong>
-                  <span>{schedule ? `${dict.detail.departures}: ${schedule}` : dict.detail.checkAvailability}</span>
+                  {/* Departure times change often — checked on Bókun at booking time */}
+                  <span>{dict.detail.checkAvailability}</span>
                 </div>
               </div>
               <div className="fact">
-                <div className="fact__icon">✓</div>
+                <div className="fact__icon">{strokeIcons.shield}</div>
                 <div>
                   <strong>{dict.detail.freeCancellation}</strong>
                   <span>{dict.detail.freeCancellationNote}</span>
                 </div>
               </div>
               <div className="fact">
-                <div className="fact__icon">🗣</div>
+                <div className="fact__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 5h13a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H10l-4 3.5V15H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+                  </svg>
+                </div>
                 <div>
                   <strong>{dict.detail.localHosts}</strong>
                   <span>{d?.languages ? `${dict.detail.languages}: ${d.languages}` : dict.detail.localHostsNote}</span>
                 </div>
               </div>
               <div className="fact">
-                <div className="fact__icon">👥</div>
+                <div className="fact__icon">{strokeIcons.people}</div>
                 <div>
                   <strong>{dict.detail.smallGroup}</strong>
                   <span>{dict.detail.smallGroupNote}</span>
@@ -261,46 +291,63 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
             )}
           </div>
 
-          {/* -------- Booking aside -------- */}
+          {/* -------- Booking aside — one featured rate, two quiet nudges -------- */}
           <aside className="detail-aside" id="book">
-            <article className="card rate-card" id="shared">
-              <p className="eyebrow">{dict.detail.sharedRate}</p>
-              <div className="rate-card__price">
-                {campaignActive && exp.shared?.referencePrice ? (
-                  <s style={{ fontWeight: 300, color: 'var(--muted-grey)', marginRight: '0.5rem' }}>
-                    €{exp.shared.referencePrice}
-                  </s>
-                ) : null}
-                €{exp.shared?.launchPrice} <small>{dict.hero.perPerson}</small>
-              </div>
-              <p style={{ fontSize: '0.92rem' }}>{exp.shared?.shortCopy}</p>
-              <BokunWidget
-                bookingChannelUUID={bookingChannelUUID}
-                widgetSrc={exp.bokun?.widgetSrc}
-                ctaLabel={exp.shared?.ctaLabel || dict.common.bookNow}
-              />
-            </article>
+            {variant === 'shared' ? (
+              <article className="card rate-card" id="shared">
+                <p className="eyebrow">{dict.detail.sharedRate}</p>
+                <div className="rate-card__price">
+                  {campaignActive && exp.shared?.referencePrice ? (
+                    <s style={{ fontWeight: 300, color: 'var(--muted-grey)', marginRight: '0.5rem' }}>
+                      €{exp.shared.referencePrice}
+                    </s>
+                  ) : null}
+                  €{exp.shared?.launchPrice} <small>{dict.hero.perPerson}</small>
+                </div>
+                <p style={{ fontSize: '0.92rem' }}>{exp.shared?.shortCopy}</p>
+                <BokunWidget
+                  bookingChannelUUID={bookingChannelUUID}
+                  widgetSrc={exp.bokun?.widgetSrc}
+                  ctaLabel={exp.shared?.ctaLabel || dict.common.bookNow}
+                />
+              </article>
+            ) : (
+              <article className="card rate-card" id="private">
+                <p className="eyebrow">{dict.detail.privateRate}</p>
+                <div className="rate-card__price">
+                  €{exp.private?.launchPrice} <small>{dict.hero.perBoat}</small>
+                </div>
+                <p style={{ fontSize: '0.92rem' }}>{exp.private?.shortCopy}</p>
+                <BokunWidget
+                  bookingChannelUUID={bookingChannelUUID}
+                  widgetSrc={exp.bokun?.widgetSrc}
+                  ctaLabel={exp.private?.ctaLabel || dict.common.bookNow}
+                />
+              </article>
+            )}
 
-            <article className="card rate-card" id="private">
-              <p className="eyebrow">{dict.detail.privateRate}</p>
-              <div className="rate-card__price">
-                €{exp.private?.launchPrice} <small>{dict.hero.perBoat}</small>
+            {variant === 'shared' ? (
+              <div className="rate-nudge">
+                <p>{dict.detail.orPrivateTitle}</p>
+                <a href={privateHref} className="btn btn--secondary btn--sm">
+                  {dict.detail.orPrivateCta}
+                </a>
               </div>
-              <p style={{ fontSize: '0.92rem' }}>{exp.private?.shortCopy}</p>
-              <BokunWidget
-                bookingChannelUUID={bookingChannelUUID}
-                widgetSrc={exp.bokun?.widgetSrc}
-                ctaLabel={exp.private?.ctaLabel || dict.common.bookNow}
-              />
-            </article>
+            ) : (
+              <div className="rate-nudge">
+                <p>{dict.detail.orSharedTitle}</p>
+                <a href={sharedHref} className="btn btn--secondary btn--sm">
+                  {dict.detail.orSharedCta}
+                </a>
+              </div>
+            )}
 
-            <p style={{ fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>
-              {dict.detail.customDetails}{' '}
-              <a href={`mailto:${email}`} className="link-gold">
-                {dict.detail.speakWithUs}
+            <div className="rate-nudge">
+              <p>{dict.privateEnquiry.eventsNote}</p>
+              <a href={`${base}/special-occasions`} className="btn btn--secondary btn--sm">
+                {dict.privateEnquiry.ctaButton}
               </a>
-              .
-            </p>
+            </div>
           </aside>
         </div>
       </section>
@@ -342,8 +389,8 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               '@context': 'https://schema.org',
               '@type': 'Product',
               name: exp.subtitle || exp.title,
-              description: exp.shared?.shortCopy,
-              url: `${SITE_URL}/${exp.slug}`,
+              description: variant === 'private' ? exp.private?.shortCopy : exp.shared?.shortCopy,
+              url: `${SITE_URL}${variant === 'private' ? privateHref : sharedHref}`,
               image: `${SITE_URL}${mediaUrl(exp.image, '/images/boat-porto-bridge.png')}`,
               brand: { '@type': 'Brand', name: 'Douro Wonders' },
               offers: [
@@ -353,7 +400,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
                   price: exp.shared?.launchPrice,
                   priceCurrency: 'EUR',
                   availability: 'https://schema.org/InStock',
-                  url: `${SITE_URL}/${exp.slug}`,
+                  url: `${SITE_URL}${sharedHref}`,
                 },
                 {
                   '@type': 'Offer',
@@ -361,7 +408,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
                   price: exp.private?.launchPrice,
                   priceCurrency: 'EUR',
                   availability: 'https://schema.org/InStock',
-                  url: `${SITE_URL}/${exp.slug}#private`,
+                  url: `${SITE_URL}${privateHref}`,
                 },
               ],
             },
@@ -371,7 +418,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               itemListElement: [
                 { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
                 { '@type': 'ListItem', position: 2, name: 'Experiences', item: `${SITE_URL}/#experiences` },
-                { '@type': 'ListItem', position: 3, name: exp.title, item: `${SITE_URL}/${exp.slug}` },
+                { '@type': 'ListItem', position: 3, name: exp.title, item: `${SITE_URL}${variant === 'private' ? privateHref : sharedHref}` },
               ],
             },
           ]),
