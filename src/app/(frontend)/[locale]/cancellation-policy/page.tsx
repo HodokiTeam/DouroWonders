@@ -59,6 +59,7 @@ export default async function CancellationPolicyPage({ params }: { params: Promi
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

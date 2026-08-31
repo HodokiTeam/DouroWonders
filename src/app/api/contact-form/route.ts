@@ -31,6 +31,7 @@ export async function POST(req: Request) {
   const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
   const name = str(body.name)
   const email = str(body.email)
+  const phone = str(body.phone)
   const subject = str(body.subject)
   const message = str(body.message)
   const honeypot = str(body._gotcha)
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
-  if (message.length > 5000 || name.length > 200 || subject.length > 200) {
+  if (message.length > 5000 || name.length > 200 || subject.length > 200 || phone.length > 40) {
     return NextResponse.json({ error: 'Too long' }, { status: 400 })
   }
 
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
   const payload = await getPayload({ config })
   await payload.create({
     collection: 'contact-messages',
-    data: { name, email, subject: subject || undefined, message, status: 'new' },
+    data: { name, email, phone: phone || undefined, subject: subject || undefined, message, status: 'new' },
   })
 
   // 2. Notify by email. A failure here is logged, not surfaced: the enquiry is safe.
@@ -76,12 +77,13 @@ export async function POST(req: Request) {
           to,
           subject: `Site — ${heading}`,
           replyTo: email,
-          text: `Nome: ${name}\nEmail: ${email}\nAssunto: ${subject || '—'}\n\n${message}`,
+          text: `Nome: ${name}\nEmail: ${email}\nTelefone: ${phone || '—'}\nAssunto: ${subject || '—'}\n\n${message}`,
           html: `
             <h2 style="font-family:sans-serif;color:#3f3d38;margin:0 0 16px">${escapeHtml(heading)}</h2>
             <table style="font-family:sans-serif;color:#3f3d38;border-collapse:collapse">
               <tr><td style="padding:4px 12px 4px 0;color:#8a8a85">Nome</td><td>${escapeHtml(name)}</td></tr>
               <tr><td style="padding:4px 12px 4px 0;color:#8a8a85">Email</td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
+              ${phone ? `<tr><td style="padding:4px 12px 4px 0;color:#8a8a85">Telefone</td><td>${escapeHtml(phone)}</td></tr>` : ''}
               ${subject ? `<tr><td style="padding:4px 12px 4px 0;color:#8a8a85">Assunto</td><td>${escapeHtml(subject)}</td></tr>` : ''}
             </table>
             <p style="font-family:sans-serif;color:#3f3d38;white-space:pre-line;margin-top:20px;padding-top:16px;border-top:1px solid #ded3b6">${escapeHtml(message)}</p>

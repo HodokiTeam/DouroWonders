@@ -9,7 +9,7 @@ import { HeroCinematic } from '@/components/HeroCinematic'
 import { RouteMap } from '@/components/RouteMap'
 import { IncludedItem } from '@/components/IncludedIcons'
 import { ContactSection } from '@/components/ContactSection'
-import type { Experience, Homepage, Media, SiteSetting } from '@/payload-types'
+import type { Experience, Homepage, Media, SiteSetting, SpecialOccasion } from '@/payload-types'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
@@ -29,11 +29,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const base = `/${locale}`
   const payload = await getPayload({ config })
 
-  const [home, settings, experiencesRes, faqsRes] = await Promise.all([
+  const [home, settings, experiencesRes, faqsRes, specialOccasions] = await Promise.all([
     payload.findGlobal({ slug: 'homepage', locale }) as Promise<Homepage>,
     payload.findGlobal({ slug: 'site-settings', locale }) as Promise<SiteSetting>,
     payload.find({ collection: 'experiences', sort: 'order', limit: 10, locale }),
     payload.find({ collection: 'faqs', sort: 'order', limit: 30, locale }),
+    payload.findGlobal({ slug: 'special-occasions', locale }) as Promise<SpecialOccasion>,
   ])
 
   const experiences = experiencesRes.docs as Experience[]
@@ -77,33 +78,43 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     image: string
   }
 
-  const sharedCards: Card[] = experiences.map((exp) => ({
-    key: `${exp.slug}-shared`,
-    variant: 'shared',
-    title: exp.title,
-    subtitle: exp.subtitle,
-    duration: exp.duration,
-    priceNow: exp.shared?.launchPrice,
-    priceRef: campaignActive ? exp.shared?.referencePrice : null,
-    priceUnit: dict.hero.perPerson,
-    copy: exp.shared?.shortCopy,
-    cta: exp.shared?.ctaLabel,
-    href: `${base}/${exp.slug}`,
-    image: mediaUrl(exp.image),
-  }))
-  const privateCards: Card[] = experiences.map((exp) => ({
-    key: `${exp.slug}-private`,
-    variant: 'private',
-    title: exp.private?.subtitle || `${dict.hero.privateCruise} · ${exp.title}`,
-    subtitle: exp.private?.subtitle,
-    duration: exp.duration,
-    priceNow: exp.private?.launchPrice,
-    priceRef: null,
-    priceUnit: dict.hero.perBoat,
-    copy: exp.private?.shortCopy,
-    cta: exp.private?.ctaLabel,
-    href: `${base}/${exp.slug}-private`,
-    image: mediaUrl(exp.imagePrivate, mediaUrl(exp.image)),
+  // One group per cruise (Day, Sunset), each holding its own Shared + Private
+  // pair — guests need to see both options for the SAME trip side by side.
+  // The group heading names the cruise itself (e.g. "Day Cruise"), not the
+  // "Shared ..." card title, which would misleadingly label the Private card too.
+  const cruiseGroups = experiences.map((exp) => ({
+    key: exp.slug,
+    title: exp.slug === 'sunset-cruise' ? dict.nav.sunsetCruise : dict.nav.dayCruise,
+    cards: [
+      {
+        key: `${exp.slug}-shared`,
+        variant: 'shared' as const,
+        title: exp.title,
+        subtitle: exp.subtitle,
+        duration: exp.duration,
+        priceNow: exp.shared?.launchPrice,
+        priceRef: campaignActive ? exp.shared?.referencePrice : null,
+        priceUnit: dict.hero.perPerson,
+        copy: exp.shared?.shortCopy,
+        cta: exp.shared?.ctaLabel,
+        href: `${base}/${exp.slug}`,
+        image: mediaUrl(exp.image),
+      },
+      {
+        key: `${exp.slug}-private`,
+        variant: 'private' as const,
+        title: exp.private?.subtitle || `${dict.hero.privateCruise} · ${exp.title}`,
+        subtitle: exp.private?.subtitle,
+        duration: exp.duration,
+        priceNow: exp.private?.launchPrice,
+        priceRef: campaignActive ? exp.private?.referencePrice : null,
+        priceUnit: dict.hero.perBoat,
+        copy: exp.private?.shortCopy,
+        cta: exp.private?.ctaLabel,
+        href: `${base}/${exp.slug}-private`,
+        image: mediaUrl(exp.imagePrivate, mediaUrl(exp.image)),
+      },
+    ] satisfies Card[],
   }))
   const renderCard = (card: Card) => (
     <article className={`card exp-card exp-card--${card.variant}`} key={card.key}>
@@ -145,47 +156,55 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             price: `${dict.hero.from} €${experiences[0]?.shared?.launchPrice ?? 40}`,
             unit: dict.hero.perPerson,
             note: dict.hero_notes.shared,
-            href: `${base}#shared-cruises`,
+            href: `${base}#experiences`,
           },
           {
             label: dict.hero.privateCruise,
             price: `${dict.hero.from} €${experiences[0]?.private?.launchPrice ?? 420}`,
             unit: dict.hero.perBoat,
             note: dict.hero_notes.private,
-            href: `${base}#private-cruises`,
+            href: `${base}#experiences`,
           },
         ]}
         trust={[dict.trust.freeCancellation, dict.trust.welcomeDrink, dict.trust.dailyDepartures]}
         primaryCta={home?.hero?.primaryCta || dict.common.bookNow}
         secondaryCta={home?.hero?.secondaryCta || 'Explore Authentic Experiences'}
         ctaHref={`${base}#experiences`}
-        slides={[
-          {
-            src: mediaUrl(home?.hero?.image, '/images/boat-porto-bridge.png'),
-            alt: 'The Douro Wonders boat on the river with Porto and the Ponte D. Luís I behind',
-            caption: 'Porto · Ponte D. Luís I',
-          },
-          {
-            src: '/images/bow-sunset.png',
-            alt: 'The bow of the boat facing Ponte D. Luís I at sunset',
-            caption: 'Douro · Ponte D. Luís I',
-          },
-          {
-            src: '/images/boat-douro-valley.png',
-            alt: 'The boat cruising the Douro valley',
-            caption: 'Wondy · Rio Douro',
-          },
-          {
-            src: '/images/ribeira-view.png',
-            alt: 'The Ribeira seen from the river',
-            caption: 'Porto · Ribeira',
-          },
-          {
-            src: '/images/wine-deck.png',
-            alt: 'A glass of wine on the teak deck at golden hour',
-            caption: 'Wondy · Porto Tonic',
-          },
-        ]}
+        slides={
+          home?.hero?.slides?.length
+            ? home.hero.slides.map((s) => ({
+                src: mediaUrl(s.image),
+                alt: s.alt,
+                caption: s.caption || undefined,
+              }))
+            : [
+                {
+                  src: mediaUrl(home?.hero?.image, '/images/boat-porto-bridge.png'),
+                  alt: 'The Douro Wonders boat on the river with Porto and the Ponte D. Luís I behind',
+                  caption: 'Porto · Ponte D. Luís I',
+                },
+                {
+                  src: '/images/bow-sunset.png',
+                  alt: 'The bow of the boat facing Ponte D. Luís I at sunset',
+                  caption: 'Douro · Ponte D. Luís I',
+                },
+                {
+                  src: '/images/boat-douro-valley.png',
+                  alt: 'The boat cruising the Douro valley',
+                  caption: 'Wondy · Rio Douro',
+                },
+                {
+                  src: '/images/ribeira-view.png',
+                  alt: 'The Ribeira seen from the river',
+                  caption: 'Porto · Ribeira',
+                },
+                {
+                  src: '/images/wine-deck.png',
+                  alt: 'A glass of wine on the teak deck at golden hour',
+                  caption: 'Wondy · Porto Tonic',
+                },
+              ]
+        }
       />
 
       {/* 2 · Experiences — by category */}
@@ -201,25 +220,52 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
 
           <div className="categories">
-            <div className="category category--shared" id="shared-cruises">
-            <div className="category__head">
-              <h3>{home?.experiencesSection?.sharedLabel || 'Shared Cruises'}</h3>
-              <span className="category__tag">
-                {home?.experiencesSection?.sharedTag || 'Per person · small groups of up to 12 guests'}
-              </span>
-            </div>
-              <div className="exp-grid--two">{sharedCards.map(renderCard)}</div>
-            </div>
+            {cruiseGroups.map((group) => (
+              <div className="category" id={group.key} key={group.key}>
+                <div className="category__head">
+                  <h3>{group.title}</h3>
+                </div>
+                <div className="exp-grid--two">{group.cards.map(renderCard)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="category category--private" id="private-cruises">
-            <div className="category__head">
-              <h3>{home?.experiencesSection?.privateLabel || 'Private Cruises'}</h3>
-              <span className="category__tag">
-                {home?.experiencesSection?.privateTag || 'Per boat · your people, your moment, our river'}
-              </span>
-            </div>
-              <div className="exp-grid--two">{privateCards.map(renderCard)}</div>
-            </div>
+      {/* 2.5 · Special Occasions — teaser for the dedicated page */}
+      <section className="section section--white" id="special-occasions-teaser">
+        <div className="container occasions-teaser">
+          <div className="occasions-teaser__intro">
+            <p className="eyebrow">{dict.homeSpecialOccasions.eyebrow}</p>
+            <h2 className="section-title">{dict.homeSpecialOccasions.title}</h2>
+            <p className="occasions-teaser__closing">
+              {specialOccasions?.closingLine || dict.homeSpecialOccasions.closingLine}
+            </p>
+            <Link href={`${base}/special-occasions`} className="btn btn--primary">
+              {dict.homeSpecialOccasions.cta}
+            </Link>
+          </div>
+          <div className="occasions-teaser__lists">
+            {!!specialOccasions?.ideas?.length && (
+              <div>
+                <h3 className="occasions-teaser__label">{dict.homeSpecialOccasions.occasionsLabel}</h3>
+                <ul className="occasions-teaser__list">
+                  {specialOccasions.ideas.map((idea, i) => (
+                    <li key={i}>{idea.text}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {!!specialOccasions?.extras?.length && (
+              <div>
+                <h3 className="occasions-teaser__label">{dict.homeSpecialOccasions.extrasLabel}</h3>
+                <ul className="occasions-teaser__list">
+                  {specialOccasions.extras.map((extra, i) => (
+                    <li key={i}>{extra.text}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -317,7 +363,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 5 · What's included */}
-      <section className="section" id="included">
+      <section className="section section--white" id="included">
         <div className="container">
           <p className="eyebrow">{dict.sections.onboard}</p>
           <h2 className="section-title">{home?.included?.title || 'What’s included'}</h2>
@@ -367,84 +413,82 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* 8 · About / Founders — near the end */}
+      {/* 8 · About / Founders — trimmed to a short intro; full bios live on /about */}
       <section className="section" id="about">
-        <div className="container">
-          <div className="founders" style={{ marginBottom: 'clamp(3.5rem, 8vw, 6rem)' }}>
-            <div>
-              <p className="eyebrow">{dict.sections.about}</p>
-              <h2 className="section-title">
-                {home?.founders?.headline || 'Made by two people who know this river personally.'}
-              </h2>
-              <p>
-                {home?.founders?.body ||
-                  'Douro Wonders was created by Inês Veloso and António Ferrer to share the Douro with more care, detail and local knowledge. António brings the maritime experience, navigation and safety. Inês shapes the guest experience, communication, creative direction and the small details that make the moment feel considered.'}
-              </p>
-            </div>
-            <div className="founders__img">
-              <img
-                src={mediaUrl(home?.founders?.image, '/images/founders-onboard.png')}
-                alt="Inês and António on board on the Douro"
-                loading="lazy"
-              />
-            </div>
+        <div className="container founders">
+          <div>
+            <p className="eyebrow">{dict.homeAbout.eyebrow}</p>
+            <h2 className="section-title">{dict.homeAbout.title}</h2>
+            <p>{dict.homeAbout.intro}</p>
+            <p style={{ marginTop: '1.4rem' }}>
+              <Link href={`${base}/about`} className="btn btn--secondary">
+                {dict.homeAbout.cta}
+              </Link>
+            </p>
           </div>
-
-          {/* Inês */}
-          <div className="person">
-            <div className="person__img">
-              <img
-                src={mediaUrl(home?.founders?.ines?.photo, '/images/ines-helm.png')}
-                alt={home?.founders?.ines?.name || 'Inês Veloso'}
-                loading="lazy"
-              />
-            </div>
-            <div>
-              <p className="person__intro">This is</p>
-              <h3 style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', marginBottom: '0.4rem' }}>
-                {home?.founders?.ines?.name || 'Inês Veloso'}
-              </h3>
-              <p className="person__role">{home?.founders?.ines?.role || 'Guest experience & creative direction'}</p>
-              <p>
-                {home?.founders?.ines?.bio ||
-                  'Inês shapes the guest experience, communication, creative direction and the small details that make the moment feel considered. With a doctorate in Fine Arts, international experience in maritime tourism in Australia and international maritime certifications, she brings photography, art direction and genuine hosting to every cruise.'}
-              </p>
-              <p className="person__sig">
-                &ldquo;The best moments on the river are the ones that feel effortless — that&rsquo;s where all
-                the work goes.&rdquo;
-              </p>
-            </div>
-          </div>
-
-          {/* António */}
-          <div className="person person--flip">
-            <div className="person__img">
-              <img
-                src={mediaUrl(home?.founders?.antonio?.photo, '/images/antonio-helm.png')}
-                alt={home?.founders?.antonio?.name || 'António Ferrer'}
-                loading="lazy"
-              />
-            </div>
-            <div>
-              <p className="person__intro">And this is</p>
-              <h3 style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', marginBottom: '0.4rem' }}>
-                {home?.founders?.antonio?.name || 'António Ferrer'}
-              </h3>
-              <p className="person__role">{home?.founders?.antonio?.role || 'Skipper — navigation & safety'}</p>
-              <p>
-                {home?.founders?.antonio?.bio ||
-                  'António is responsible for the maritime operation, navigation and safety. An experienced skipper on the Douro since 2019, he knows the river personally — its bridges, its stories and its quieter corners — and brings that deep local knowledge to every departure.'}
-              </p>
-              <p className="person__sig">
-                &ldquo;Every day the river is different. That&rsquo;s why I never get tired of it.&rdquo;
-              </p>
-            </div>
+          <div className="founders__img">
+            <img
+              src={mediaUrl(home?.founders?.image, '/images/founders-onboard.png')}
+              alt="Inês and António on board on the Douro"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
 
+      {/* 8.5 · Reviews — real guest stories, hidden until the founders add some */}
+      {!!home?.reviewsSection?.reviews?.length && (
+        <section className="section section--white" id="reviews">
+          <div className="container">
+            <div className="section-head--center">
+              <p className="eyebrow">{dict.homeReviews.eyebrow}</p>
+              <h2 className="section-title">{dict.homeReviews.title}</h2>
+            </div>
+            <div className="reviews-grid">
+              {home.reviewsSection.reviews.map((review, i) => (
+                <figure className="review-card" key={i}>
+                  <div className="review-card__stars" aria-hidden="true">
+                    {'★'.repeat(review.rating)}
+                    {'☆'.repeat(5 - review.rating)}
+                  </div>
+                  <blockquote>&ldquo;{review.quote}&rdquo;</blockquote>
+                  <figcaption>
+                    {review.name} · {review.source === 'tripadvisor' ? 'Tripadvisor' : 'Google'}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            {(home.reviewsSection.googleReviewsUrl || home.reviewsSection.tripadvisorUrl) && (
+              <p style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+                {home.reviewsSection.googleReviewsUrl && (
+                  <a
+                    href={home.reviewsSection.googleReviewsUrl}
+                    className="btn btn--primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {dict.homeReviews.cta}
+                  </a>
+                )}
+                {home.reviewsSection.tripadvisorUrl && (
+                  <a
+                    href={home.reviewsSection.tripadvisorUrl}
+                    className="link-gold"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginLeft: '1.2rem' }}
+                  >
+                    {dict.homeReviews.tripadvisorCta}
+                  </a>
+                )}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* 9 · FAQ */}
-      <section className="section" id="faq">
+      <section className="section section--sand" id="faq">
         <div className="container">
           <p className="eyebrow">{dict.sections.goodToKnow}</p>
           <h2 className="section-title">{home?.faqSection?.title || 'Frequently asked questions'}</h2>
@@ -466,7 +510,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 9 · Meeting point */}
-      <section className="section" id="meeting-point">
+      <section className="section section--white" id="meeting-point">
         <div className="container meeting">
           <div>
             <p className="eyebrow">{dict.sections.meetingPoint}</p>
@@ -533,6 +577,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

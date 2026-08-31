@@ -28,6 +28,7 @@ export function PrivateEnquiryForm({
 
     const name = String(fd.get('name') || '')
     const email = String(fd.get('email') || '')
+    const phone = String(fd.get('phone') || '')
     const cruise = String(fd.get('cruise') || '')
     const date = String(fd.get('date') || '')
     const guests = String(fd.get('guests') || '')
@@ -53,6 +54,7 @@ export function PrivateEnquiryForm({
         body: JSON.stringify({
           name,
           email,
+          phone,
           subject: dict.eyebrow,
           message,
         }),
@@ -91,6 +93,10 @@ export function PrivateEnquiryForm({
       </div>
       <div className="contact-form__row">
         <label>
+          {contactDict.phoneOptional}
+          <input name="phone" type="tel" autoComplete="tel" placeholder={contactDict.phonePlaceholder} />
+        </label>
+        <label>
           {dict.cruise}
           <select name="cruise" defaultValue="">
             <option value="" disabled>
@@ -101,25 +107,27 @@ export function PrivateEnquiryForm({
             <option value={dict.cruiseUnsure}>{dict.cruiseUnsure}</option>
           </select>
         </label>
+      </div>
+      <div className="contact-form__row">
         <label>
           {dict.date}
           <input name="date" type="date" />
         </label>
-      </div>
-      <div className="contact-form__row">
         <label>
           {dict.guests}
           <input name="guests" type="number" min={1} max={12} placeholder={dict.guestsPlaceholder} />
         </label>
+      </div>
+      <div className="contact-form__row">
         <label>
           {dict.occasion}
           <input name="occasion" type="text" placeholder={dict.occasionPlaceholder} />
         </label>
+        <label>
+          {dict.extras}
+          <input name="extras" type="text" placeholder={dict.extrasPlaceholder} />
+        </label>
       </div>
-      <label>
-        {dict.extras}
-        <input name="extras" type="text" placeholder={dict.extrasPlaceholder} />
-      </label>
       <label>
         {contactDict.message}
         <textarea name="message" rows={4} placeholder={dict.messagePlaceholder} />

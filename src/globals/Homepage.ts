@@ -32,7 +32,23 @@ export const Homepage: GlobalConfig = {
                 t({ name: 'primaryCta', type: 'text', required: true }),
                 t({ name: 'secondaryCta', type: 'text', required: true }),
                 t({ name: 'mobileStickyCta', type: 'text', required: true }),
-                { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'First / main hero photo.' } },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: { description: 'Fallback photo, used only if the slideshow below is empty.' },
+                },
+                {
+                  name: 'slides',
+                  type: 'array',
+                  labels: { singular: 'Slide', plural: 'Slides' },
+                  admin: { description: 'The rotating hero photos, in order. Add as many as you like.' },
+                  fields: [
+                    { name: 'image', type: 'upload', relationTo: 'media', required: true },
+                    t({ name: 'alt', type: 'text', required: true, admin: { description: 'Describes the photo — used for SEO and screen readers.' } }),
+                    t({ name: 'caption', type: 'text', admin: { description: 'Short caption shown over the photo, e.g. "Porto · Ponte D. Luís I".' } }),
+                  ],
+                },
               ],
             },
           ],
@@ -214,7 +230,51 @@ export const Homepage: GlobalConfig = {
           ],
         },
         {
-          label: '9 · FAQ',
+          label: '9 · Reviews',
+          description: 'Real guest reviews shown before the FAQ. Leave empty to hide the section.',
+          fields: [
+            {
+              name: 'reviewsSection',
+              type: 'group',
+              label: 'Guest reviews',
+              fields: [
+                {
+                  name: 'googleReviewsUrl',
+                  type: 'text',
+                  admin: { description: 'CTA link — "Read our Google reviews".' },
+                },
+                {
+                  name: 'tripadvisorUrl',
+                  type: 'text',
+                  admin: { description: 'Secondary CTA link to the Tripadvisor profile.' },
+                },
+                t({
+                  name: 'reviews',
+                  type: 'array',
+                  labels: { singular: 'Review', plural: 'Reviews' },
+                  admin: { description: 'Only add reviews actually left by real guests.' },
+                  fields: [
+                    { name: 'rating', type: 'number', min: 1, max: 5, defaultValue: 5, required: true },
+                    { name: 'name', type: 'text', required: true, admin: { description: "Guest's first name." } },
+                    {
+                      name: 'source',
+                      type: 'select',
+                      required: true,
+                      defaultValue: 'google',
+                      options: [
+                        { label: 'Google', value: 'google' },
+                        { label: 'Tripadvisor', value: 'tripadvisor' },
+                      ],
+                    },
+                    { name: 'quote', type: 'textarea', required: true },
+                  ],
+                }),
+              ],
+            },
+          ],
+        },
+        {
+          label: '10 · FAQ',
           description: 'Heading for the FAQ section. The questions themselves live in the FAQs collection.',
           fields: [
             {

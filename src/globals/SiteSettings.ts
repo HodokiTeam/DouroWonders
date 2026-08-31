@@ -17,6 +17,12 @@ export const SiteSettings: GlobalConfig = {
     },
     { name: 'email', type: 'text', required: true },
     {
+      name: 'footerTagline',
+      type: 'textarea',
+      localized: true,
+      admin: { description: 'Short line shown under the logo in the footer.' },
+    },
+    {
       name: 'formEndpoint',
       type: 'text',
       label: 'Contact form endpoint (not in use)',

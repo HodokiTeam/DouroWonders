@@ -20,10 +20,11 @@
   --card-shadow: 0 1px 2px rgba(63, 61, 56, 0.04), 0 8px 32px rgba(111, 111, 106, 0.1);
   --card-shadow-hover: 0 2px 4px rgba(63, 61, 56, 0.05), 0 24px 56px rgba(111, 111, 106, 0.16);
   --radius-pill: 999px;
-  --radius-card: 20px;
+  /* Subtle, almost-square corners for photos and card frames, per founders' request */
+  --radius-card: 6px;
   /* smaller, less "pill-like" corner: language switcher, photos site-wide */
   --radius-soft: 10px;
-  --radius-photo: 12px;
+  --radius-photo: 4px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ink: #3f3d38;
 
@@ -46,14 +47,12 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* Smooth scrolling is applied per-click (see src/lib/smoothScroll.ts) to
+   same-page anchor jumps only — a global scroll-behavior: smooth here also
+   animates Next.js's own scroll-to-top after a route change, which reads as
+   the whole page scrolling up from the footer instead of opening at the top. */
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
@@ -201,12 +200,6 @@ p {
 .category {
   min-width: 0;
 }
-/* Shared vs. Private no longer reads through a wrapping panel — the two
-   columns sit directly on the section background. The distinction now lives
-   in the hover colour of each card instead (see .exp-grid--two below). */
-.category--private .category__tag {
-  color: #8e7441;
-}
 .category__head {
   display: flex;
   align-items: baseline;
@@ -216,12 +209,11 @@ p {
   flex-wrap: wrap;
 }
 .category__head h3 {
-  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
-}
-.category__tag {
-  font-size: var(--fs-caption);
-  color: var(--muted-grey);
-  font-weight: 400;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--douro-gold);
 }
 .exp-grid--two {
   display: grid;
@@ -416,14 +408,19 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  /* Never let the flex row squeeze these — a shrunk flex-basis on a
+     fixed-height image stretches its aspect ratio ("logo deformado"). */
+  flex-shrink: 0;
 }
 .site-header__symbol {
   height: 48px;
   width: auto;
+  flex-shrink: 0;
 }
 .site-header__wordmark {
   height: 38px;
   width: auto;
+  flex-shrink: 0;
 }
 .site-header__nav {
   display: flex;
@@ -437,9 +434,54 @@ textarea:focus {
   text-transform: uppercase;
   letter-spacing: 0.09em;
   transition: color 0.25s var(--ease);
+  /* Tablets otherwise paint the browser's own tap-highlight rectangle
+     behind the link on every touch. */
+  -webkit-tap-highlight-color: transparent;
 }
-.site-header__nav a:not(.btn):hover {
+.site-header__nav a:not(.btn):hover,
+.site-header__nav a:not(.btn):focus-visible {
   color: var(--douro-gold);
+  background: transparent;
+}
+
+/* Experiences — hover/focus reveals Day Cruise / Sunset Cruise */
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown__panel {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid var(--light-sand);
+  border-radius: var(--radius-soft);
+  padding: 0.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0.2s;
+}
+.nav-dropdown:hover .nav-dropdown__panel,
+.nav-dropdown:focus-within .nav-dropdown__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown__panel a {
+  padding: 0.55rem 0.8rem;
+  border-radius: 7px;
+  white-space: nowrap;
+  text-align: center;
+}
+.nav-dropdown__panel a:hover {
+  background: transparent;
 }
 /* Book Now in the header is a slim pill, matching the language switcher's
    proportions rather than the full-size CTA used in the hero and cards */
@@ -455,10 +497,10 @@ textarea:focus {
     display: none;
   }
   .site-header__symbol {
-    display: none;
+    height: 34px;
   }
   .site-header__wordmark {
-    height: 32px;
+    height: 30px;
   }
 }
 
@@ -543,15 +585,21 @@ textarea:focus {
   padding: 0.5rem 0;
 }
 .mobilemenu__links a {
-  padding: 0.95rem 0;
-  font-size: 1.35rem;
+  padding: 0.8rem 0;
+  font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--ink);
   border-bottom: 1px solid rgba(222, 211, 182, 0.55);
+  -webkit-tap-highlight-color: transparent;
 }
 .mobilemenu__links a:active {
   color: var(--gold-hover);
+}
+.mobilemenu__links a.mobilemenu__sub {
+  padding: 0.6rem 0 0.6rem 1.2rem;
+  font-size: 1rem;
+  color: var(--warm-grey);
 }
 .mobilemenu__langs {
   margin-top: auto;
@@ -1068,7 +1116,7 @@ textarea:focus {
   box-shadow: none;
 }
 .exp-card__img {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--radius-photo);
 }
@@ -1082,15 +1130,16 @@ textarea:focus {
   transform: scale(1.04);
 }
 .exp-card__body {
-  padding: 1.15rem 0 0;
+  padding: 0.9rem 0 0;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.55rem;
+  gap: 0.45rem;
   /* Shared and Private sit in two separate grids side by side, so CSS
      Grid's own row-stretch can't level them — a shared floor height does,
-     with the button pinned to the bottom via margin-top: auto. */
-  min-height: 400px;
+     with the button pinned to the bottom via margin-top: auto. Kept low so
+     the CTA stays close to the fold when the section first comes into view. */
+  min-height: 290px;
 }
 .exp-card__title {
   font-size: 1.15rem;
@@ -1124,14 +1173,24 @@ textarea:focus {
 .exp-card__copy {
   font-size: 0.93rem;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .exp-card__body .btn {
   align-self: stretch;
   width: 100%;
   margin-top: auto;
-  padding-top: 0.9rem;
-  padding-bottom: 0.9rem;
-  white-space: normal;
+  padding: 0.9rem 1.2rem;
+  font-size: 0.86rem;
+  /* A longer CTA label (e.g. "Book Private Sunset Cruise") must never wrap
+     to a second line — that makes just that one button taller and breaks
+     the shared floor across the 4 cards. Truncate instead, with tighter
+     horizontal padding so it only kicks in when the label really is long. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.25;
 }
 
@@ -1166,21 +1225,19 @@ textarea:focus {
   gap: 0.95rem;
   font-size: 0.95rem;
 }
+/* Just the icon symbol — no container, no box behind it */
 .included-icon {
   flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: var(--warm-sand);
-  border: 1px solid var(--light-sand);
-  color: #8e7441; /* darker champagne for contrast */
+  width: 28px;
+  height: 28px;
+  color: var(--douro-gold);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .included-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
 }
 
 /* ---------- Route ---------- */
@@ -1288,7 +1345,7 @@ textarea:focus {
   }
 }
 .boat__gallery figure {
-  border-radius: 16px;
+  border-radius: var(--radius-photo);
   overflow: hidden;
   box-shadow: var(--card-shadow);
   aspect-ratio: 4 / 3;
@@ -1310,6 +1367,11 @@ textarea:focus {
      a large desktop monitor — cap it to a comfortable reading width */
   max-width: 1140px;
   margin-inline: auto;
+}
+/* Smaller companion map beside the itinerary on the experience detail pages */
+.routemap--compact {
+  margin-top: 0;
+  max-width: none;
 }
 .routemap__toggle {
   display: flex;
@@ -1473,6 +1535,14 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.25);
   color: var(--pure-white);
 }
+.routemap__chip--more {
+  border-style: dashed;
+  color: var(--douro-gold);
+  font-weight: 600;
+}
+.routemap__chip--more:hover {
+  background: var(--warm-sand);
+}
 .routemap__caption {
   margin-top: 1.2rem;
   font-size: 0.95rem;
@@ -1527,7 +1597,7 @@ textarea:focus {
   margin-bottom: 0;
 }
 .person__img {
-  border-radius: 24px;
+  border-radius: var(--radius-photo);
   overflow: hidden;
   box-shadow: var(--card-shadow-hover);
   aspect-ratio: 1 / 1;
@@ -1580,39 +1650,6 @@ textarea:focus {
 }
 
 /* ---------- Experience photo gallery ---------- */
-.exp-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-}
-@media (max-width: 860px) {
-  .exp-gallery {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 520px) {
-  .exp-gallery {
-    grid-template-columns: 1fr;
-  }
-}
-.exp-gallery figure {
-  position: relative;
-  border-radius: var(--radius-photo);
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-  aspect-ratio: 4 / 3;
-}
-/* Let the first photo span two columns for a nicer editorial rhythm */
-.exp-gallery figure:first-child {
-  grid-column: span 2;
-  aspect-ratio: 16 / 9;
-}
-@media (max-width: 520px) {
-  .exp-gallery figure:first-child {
-    grid-column: span 1;
-    aspect-ratio: 4 / 3;
-  }
-}
 .exp-gallery img {
   width: 100%;
   height: 100%;
@@ -1622,37 +1659,116 @@ textarea:focus {
 .exp-gallery figure:hover img {
   transform: scale(1.045);
 }
-.exp-gallery figcaption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 1.4rem 1rem 0.7rem;
-  font-size: var(--fs-caption);
-  color: var(--pure-white);
-  background: linear-gradient(to top, rgba(30, 24, 12, 0.6), transparent);
-}
 
-/* Compact variant when the gallery sits inside the detail main column */
+/* GetYourGuide-style gallery on the experience detail pages: one large photo
+   plus a 2x2 thumbnail grid, capped to a comfortable desktop height. */
 .exp-gallery--inline {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.9rem;
-  margin-bottom: 2.2rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0.6rem;
+  height: 300px;
+  margin-bottom: 0;
 }
 .exp-gallery--inline figure {
-  border-radius: 14px;
+  border-radius: var(--radius-photo);
+  cursor: pointer;
+  position: relative;
+  height: 100%;
+  margin: 0;
 }
-.exp-gallery--inline figure:first-child {
-  grid-column: span 2;
-  aspect-ratio: 16 / 9;
+.exp-gallery__main {
+  height: 100%;
 }
-@media (max-width: 520px) {
+.exp-gallery__thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.6rem;
+  height: 100%;
+}
+.exp-gallery__viewall {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--pure-white);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: var(--card-shadow);
+}
+.exp-gallery__viewall svg {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 700px) {
   .exp-gallery--inline {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    height: auto;
   }
-  .exp-gallery--inline figure:first-child {
-    grid-column: span 2;
+  .exp-gallery__main {
+    aspect-ratio: 16 / 10;
   }
+  .exp-gallery__thumbs {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: none;
+    height: auto;
+  }
+  .exp-gallery__thumbs figure {
+    aspect-ratio: 1;
+    height: auto;
+  }
+}
+
+/* ---------- Gallery lightbox ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 17, 10, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox__img {
+  max-width: min(90vw, 1200px);
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--radius-photo);
+}
+.lightbox__close {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  background: transparent;
+  border: 0;
+  color: var(--pure-white);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.4rem;
+}
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  color: var(--pure-white);
+  font-size: 2.6rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.6rem 1rem;
+}
+.lightbox__nav--prev {
+  left: clamp(0.4rem, 2vw, 1.5rem);
+}
+.lightbox__nav--next {
+  right: clamp(0.4rem, 2vw, 1.5rem);
 }
 
 /* ---------- Map embed ---------- */
@@ -1999,27 +2115,81 @@ textarea:focus {
   color: var(--warm-grey);
 }
 
-/* Occasion ideas — a waffle of hairlines instead of a plain checklist, so
-   the ideas themselves read as the star of the page. */
-.occasion-grid {
-  list-style: none;
+/* Homepage Special Occasions teaser — intro + two hairline lists, no cards */
+.occasions-teaser {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.occasions-teaser__closing {
+  margin: 1.4rem 0 1.8rem;
+  color: var(--warm-grey);
+}
+.occasions-teaser__lists {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 2rem 0;
-  border-top: 1px solid var(--light-sand);
-  border-left: 1px solid var(--light-sand);
+  gap: clamp(1.5rem, 4vw, 3rem);
 }
-.occasion-grid li {
-  padding: 1.2rem 1.4rem;
-  border-right: 1px solid var(--light-sand);
+.occasions-teaser__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--douro-gold);
+  margin-bottom: 0.9rem;
+}
+.occasions-teaser__list {
+  list-style: none;
+  border-top: 1px solid var(--light-sand);
+}
+.occasions-teaser__list li {
+  padding: 0.85rem 0;
   border-bottom: 1px solid var(--light-sand);
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-size: 1rem;
   color: var(--ink);
   line-height: 1.4;
 }
+@media (max-width: 860px) {
+  .occasions-teaser {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 560px) {
-  .occasion-grid {
+  .occasions-teaser__lists {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Guest reviews — flat cards separated by hairlines, no shadows/boxes */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+.review-card {
+  margin: 0;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--light-sand);
+}
+.review-card__stars {
+  color: var(--douro-gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.8rem;
+}
+.review-card blockquote {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.review-card figcaption {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--warm-grey);
+}
+@media (max-width: 860px) {
+  .reviews-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -2036,8 +2206,8 @@ textarea:focus {
   gap: 0.4rem;
   background: transparent;
   border: 1px solid var(--light-sand);
-  border-radius: var(--radius-soft);
-  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.9rem;
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 500;
@@ -2062,7 +2232,7 @@ textarea:focus {
   list-style: none;
   min-width: 150px;
   /* same translucent glass as the header bar, not a solid white card */
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border: 1px solid var(--light-sand);
@@ -2086,8 +2256,7 @@ textarea:focus {
   transition: all 0.2s var(--ease);
 }
 .lang__menu button:hover {
-  background: var(--warm-sand);
-  color: var(--ink);
+  color: var(--douro-gold);
 }
 .lang__menu button.is-active {
   color: var(--gold-hover);
@@ -2283,7 +2452,10 @@ textarea:focus {
 .sticky-cta {
   display: none;
 }
-@media (max-width: 760px) {
+/* Must match the .site-header__nav breakpoint exactly — otherwise there's a
+   width range where the header's Book Now is hidden but this hasn't appeared
+   yet, so no booking CTA is visible at all (reported as a "glitch" on resize). */
+@media (max-width: 900px) {
   .sticky-cta {
     display: block;
     position: fixed;
@@ -2302,15 +2474,29 @@ textarea:focus {
 }
 
 /* ---------- Experience page ---------- */
-.exp-hero {
-  position: relative;
-  min-height: 40svh;
-  display: flex;
-  align-items: flex-end;
-  color: var(--pure-white);
+/* Compact plain-text hero for the experience detail pages — no photo, since
+   the gallery right below already carries the visuals. */
+.exp-hero-plain {
+  padding: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(0.8rem, 2vw, 1.1rem);
 }
-.exp-hero .hero__content {
-  padding-bottom: 3rem;
+.exp-hero-plain__title {
+  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.exp-hero-plain__sub {
+  font-size: var(--fs-sub);
+  color: var(--warm-grey);
+  max-width: 40rem;
+}
+.exp-hero-plain__rating {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.exp-hero-plain__rating span {
+  color: var(--douro-gold);
 }
 .rate-grid {
   display: grid;
@@ -2389,27 +2575,91 @@ textarea:focus {
 }
 
 /* ---------- Experience detail page ---------- */
-.detail-layout {
+/* Compact hero — no room reserved for the Opening Offer badge; the top
+   announcement bar already covers it, so we don't repeat it here. */
+/* Gallery + booking options, side by side right at the top of the page. On
+   mobile the two stack in DOM order — gallery, then booking — so the CTA
+   never ends up buried under all the secondary content further down. */
+/* The booking column spans both rows and stays sticky beside ALL the left
+   content (not just the intro) — otherwise the grid's shared row height
+   makes the intro row as tall as the (much taller) booking column, leaving
+   a dead gap before the body row can start. */
+.detail-top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-rows: auto auto;
   gap: clamp(2rem, 4vw, 3.5rem);
   align-items: start;
+  margin-bottom: 2.5rem;
 }
-@media (max-width: 960px) {
-  .detail-layout {
-    grid-template-columns: 1fr;
-  }
+.detail-top__intro {
+  grid-column: 1;
+  grid-row: 1;
 }
-.detail-aside {
-  position: sticky;
-  top: 110px;
+.detail-top__body {
+  grid-column: 1;
+  grid-row: 2;
+  max-width: 60rem;
+}
+.detail-top__body .prose {
+  max-width: 42rem;
+}
+.rate-options {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 1.2rem;
+  position: sticky;
+  top: 110px;
+  align-self: start;
 }
+/* Below this width the grid collapses to one column and everything must
+   fall back to plain DOM order — gallery+facts, then booking, then the long
+   body — so booking never ends up buried after all the content on mobile.
+   Must come AFTER the rules above: equal-specificity selectors resolve by
+   source order, and this needs to win once the media query is active. */
 @media (max-width: 960px) {
-  .detail-aside {
+  .detail-top {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .detail-top__intro,
+  .detail-top__body,
+  .rate-options {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .rate-options {
     position: static;
+  }
+}
+/* On the -private URL, lead with the private card without changing DOM order */
+.rate-options--private-first .rate-card--private {
+  order: -1;
+}
+.detail-disclosure {
+  margin-top: 1rem;
+}
+.detail-disclosure summary {
+  cursor: pointer;
+  color: var(--douro-gold);
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+.detail-disclosure[open] summary {
+  margin-bottom: 1rem;
+}
+
+.itinerary-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .itinerary-layout {
+    grid-template-columns: 1fr;
   }
 }
 

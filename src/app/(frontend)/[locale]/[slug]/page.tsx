@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -8,6 +7,9 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { BokunWidget } from '@/components/BokunWidget'
 import { ContactSection } from '@/components/ContactSection'
+import { ExperienceGallery } from '@/components/ExperienceGallery'
+import { RouteMap } from '@/components/RouteMap'
+import { StickyBookingCta } from '@/components/StickyBookingCta'
 import { strokeIcons } from '@/components/IncludedIcons'
 import type { Experience, Homepage, Media, SiteSetting } from '@/payload-types'
 import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
@@ -90,47 +92,48 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
   const sharedHref = `${base}/${exp.slug}`
   const privateHref = `${base}/${exp.slug}${PRIVATE_SUFFIX}`
 
+  const reviews = home?.reviewsSection?.reviews || []
+  const reviewCount = reviews.length
+  const avgRating = reviewCount ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount : 0
+
   return (
     <>
       <Header locale={locale} dict={dict} announcement={campaignActive ? home?.campaign?.badgeText : null} />
 
-      <section className="hero exp-hero">
-        <div className="hero__bg">
-          <Image
-            src={mediaUrl(exp.image, '/images/hero.png')}
-            alt={exp.subtitle || exp.title}
-            fill
-            priority
-            sizes="100vw"
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
-        <div className="container hero__content">
-          {campaignActive && home?.campaign?.badgeText && (
-            <span className="badge badge--onimage">{home.campaign.badgeText}</span>
+      {/* Compact hero — title and subtitle only; the photo now lives in the gallery below,
+          and the Opening Offer already shows in the top banner */}
+      <section className="exp-hero-plain">
+        <div className="container">
+          <h1 className="exp-hero-plain__title">{exp.title}</h1>
+          <p className="exp-hero-plain__sub">{exp.subtitle}</p>
+          {reviewCount > 0 && (
+            <p className="exp-hero-plain__rating">
+              <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
+            </p>
           )}
-          <h1 className="hero__title">{exp.title}</h1>
-          <p className="hero__sub">{exp.subtitle}</p>
+          {exp.reviewUrl && (
+            <p style={{ marginTop: '0.4rem' }}>
+              <a href={exp.reviewUrl} className="link-gold" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.88rem' }}>
+                {dict.detail.leaveReview}
+              </a>
+            </p>
+          )}
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)' }}>
-        <div className="container detail-layout">
-          {/* -------- Main column -------- */}
-          <div>
-            {/* Photo gallery — first thing in the main column, beside the booking box */}
-            {!!exp.gallery?.length && (
-              <div className="exp-gallery exp-gallery--inline">
-                {exp.gallery.map((g, i) => (
-                  <figure key={g.id || i}>
-                    <img src={mediaUrl(g.image)} alt={g.caption || exp.subtitle || exp.title} loading="lazy" />
-                    {g.caption && <figcaption>{g.caption}</figcaption>}
-                  </figure>
-                ))}
-              </div>
-            )}
+      <section className="section" style={{ paddingTop: 'clamp(1rem, 2vw, 1.5rem)' }}>
+        <div className="container detail-top">
+          {/* -------- Intro row — gallery and facts, above the fold -------- */}
+          <div className="detail-top__intro">
+            <ExperienceGallery
+              photos={(exp.gallery || []).map((g) => ({
+                src: mediaUrl(g.image),
+                alt: g.caption || exp.subtitle || exp.title,
+              }))}
+              viewAllLabel={dict.detail.viewAllPhotos}
+            />
 
-            {/* Facts — same thin-stroke icon language as the On Board list */}
+            {/* -------- Facts — same thin-stroke icon language as the On Board list -------- */}
             <div className="facts">
               <div className="fact">
                 <div className="fact__icon">
@@ -171,7 +174,59 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
                 </div>
               </div>
             </div>
+          </div>
 
+          {/* -------- Booking options — Shared and Private shown side by side, right away.
+              Spans both rows below and stays sticky beside all the content, not just the intro. -------- */}
+          <div className={`rate-options${variant === 'private' ? ' rate-options--private-first' : ''}`} id="book">
+            <article className="card rate-card" id="shared">
+              <p className="eyebrow">{dict.detail.sharedRate}</p>
+              <div className="rate-card__price">
+                {campaignActive && exp.shared?.referencePrice ? (
+                  <s style={{ fontWeight: 300, color: 'var(--muted-grey)', marginRight: '0.5rem' }}>
+                    €{exp.shared.referencePrice}
+                  </s>
+                ) : null}
+                €{exp.shared?.launchPrice} <small>{dict.hero.perPerson}</small>
+              </div>
+              <p style={{ fontSize: '0.92rem' }}>{exp.shared?.shortCopy}</p>
+              <BokunWidget
+                bookingChannelUUID={bookingChannelUUID}
+                widgetSrc={exp.bokun?.widgetSrc}
+                ctaLabel={exp.shared?.ctaLabel || dict.common.bookNow}
+              />
+            </article>
+
+            <article className="card rate-card rate-card--private" id="private">
+              <p className="eyebrow">{dict.detail.privateRate}</p>
+              <div className="rate-card__price">
+                {campaignActive && exp.private?.referencePrice ? (
+                  <s style={{ fontWeight: 300, color: 'var(--muted-grey)', marginRight: '0.5rem' }}>
+                    €{exp.private.referencePrice}
+                  </s>
+                ) : null}
+                €{exp.private?.launchPrice} <small>{dict.hero.perBoat}</small>
+              </div>
+              <p style={{ fontSize: '0.92rem' }}>{exp.private?.shortCopy}</p>
+              <BokunWidget
+                bookingChannelUUID={bookingChannelUUID}
+                widgetSrc={exp.bokun?.widgetSrc}
+                ctaLabel={exp.private?.ctaLabel || dict.common.bookNow}
+                className="btn btn--secondary"
+              />
+            </article>
+
+            <div className="rate-nudge">
+              <p>{dict.privateEnquiry.eventsNote}</p>
+              <a href={`${base}/special-occasions`} className="btn btn--secondary btn--sm">
+                {dict.privateEnquiry.ctaButton}
+              </a>
+            </div>
+          </div>
+
+          {/* -------- Body row — everything else, directly below the intro; the
+              booking column (above) stays sticky alongside all of this -------- */}
+          <div className="detail-top__body">
             {/* Highlights */}
             {!!d?.highlights?.length && (
               <div className="detail-section">
@@ -184,171 +239,161 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            {/* Full description */}
-            {paragraphs.length > 0 && (
-              <div className="detail-section">
-                <h2>{dict.detail.fullDescription}</h2>
-                <div className="prose">
-                  {paragraphs.map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Itinerary */}
-            {!!d?.itinerary?.length && (
-              <div className="detail-section">
-                <h2>{dict.detail.itinerary}</h2>
-                <ol className="route__stops">
-                  {d.itinerary.map((s) => (
-                    <li key={s.id || s.stop}>
-                      <strong style={{ fontWeight: 500, color: '#3f3d38' }}>{s.stop}</strong>
-                      {s.note && (
-                        <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>{s.note}</div>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-                <p className="route__note">
-                  {dict.detail.routeNote}
-                </p>
-              </div>
-            )}
-
-            {/* Includes */}
-            {!!d?.includes?.length && (
-              <div className="detail-section">
-                <h2>{dict.detail.includes}</h2>
-                <ul className="check-list">
-                  {d.includes.map((i) => (
-                    <li key={i.id || i.item}>{i.item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Meeting point */}
+            {/* Full description — first two paragraphs visible, rest collapsible */}
+          {paragraphs.length > 0 && (
             <div className="detail-section">
-              <h2>{dict.detail.meetingPoint}</h2>
-              <p>
-                {settings?.meetingPoint?.name || 'Douro Marina | Afurada'} ·{' '}
-                {(settings?.meetingPoint?.addressLines || []).map((l) => l.line).join(' · ') ||
-                  'Rua da Praia 430 · Gate B · 4400-354 Vila Nova de Gaia · Porto, Portugal'}
-              </p>
-              <p style={{ fontWeight: 500, color: '#3f3d38', marginTop: '0.4rem' }}>
-                {settings?.meetingPoint?.arrivalNote || 'Please arrive 10 minutes before departure.'}
-              </p>
-              {settings?.meetingPoint?.mapsUrl && (
-                <p style={{ marginTop: '0.8rem' }}>
-                  <a
-                    href={settings.meetingPoint.mapsUrl}
-                    className="link-gold"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {dict.detail.openInMaps}
-                  </a>
-                </p>
+              <h2>{dict.detail.fullDescription}</h2>
+              <div className="prose">
+                {paragraphs.slice(0, 2).map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+              {paragraphs.length > 2 && (
+                <details className="detail-disclosure">
+                  <summary>{dict.detail.readFullDescription}</summary>
+                  <div className="prose">
+                    {paragraphs.slice(2).map((p, i) => (
+                      <p key={i}>{p}</p>
+                    ))}
+                  </div>
+                </details>
               )}
             </div>
+          )}
 
-            {/* Important information */}
-            {(!!d?.notSuitableFor?.length || !!d?.notAllowed?.length || !!d?.knowBeforeYouGo?.length) && (
-              <div className="detail-section">
-                <h2>{dict.detail.importantInfo}</h2>
-                {!!d?.notSuitableFor?.length && (
-                  <>
-                    <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.notSuitable}</h3>
-                    <ul className="x-list">
-                      {d.notSuitableFor.map((i) => (
-                        <li key={i.id || i.item}>{i.item}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-                {!!d?.notAllowed?.length && (
-                  <>
-                    <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.notAllowed}</h3>
-                    <ul className="x-list">
-                      {d.notAllowed.map((i) => (
-                        <li key={i.id || i.item}>{i.item}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-                {!!d?.knowBeforeYouGo?.length && (
-                  <>
-                    <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.knowBefore}</h3>
-                    <ul className="check-list">
-                      {d.knowBeforeYouGo.map((i) => (
-                        <li key={i.id || i.item}>{i.item}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* -------- Booking aside — one featured rate, two quiet nudges -------- */}
-          <aside className="detail-aside" id="book">
-            {variant === 'shared' ? (
-              <article className="card rate-card" id="shared">
-                <p className="eyebrow">{dict.detail.sharedRate}</p>
-                <div className="rate-card__price">
-                  {campaignActive && exp.shared?.referencePrice ? (
-                    <s style={{ fontWeight: 300, color: 'var(--muted-grey)', marginRight: '0.5rem' }}>
-                      €{exp.shared.referencePrice}
-                    </s>
-                  ) : null}
-                  €{exp.shared?.launchPrice} <small>{dict.hero.perPerson}</small>
+          {/* Itinerary — main route highlights, rest collapsible, map alongside */}
+          {!!d?.itinerary?.length && (
+            <div className="detail-section">
+              <h2>{dict.detail.itinerary}</h2>
+              <div className="itinerary-layout">
+                <div>
+                  <ol className="route__stops">
+                    {d.itinerary.slice(0, 8).map((s) => (
+                      <li key={s.id || s.stop}>
+                        <strong style={{ fontWeight: 500, color: '#3f3d38' }}>{s.stop}</strong>
+                        {s.note && (
+                          <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>{s.note}</div>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                  {d.itinerary.length > 8 && (
+                    <details className="detail-disclosure">
+                      <summary>{dict.detail.viewFullRoute}</summary>
+                      <ol className="route__stops" start={9}>
+                        {d.itinerary.slice(8).map((s) => (
+                          <li key={s.id || s.stop}>
+                            <strong style={{ fontWeight: 500, color: '#3f3d38' }}>{s.stop}</strong>
+                            {s.note && (
+                              <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>
+                                {s.note}
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
+                  )}
+                  <p className="route__note">{dict.detail.routeNote}</p>
                 </div>
-                <p style={{ fontSize: '0.92rem' }}>{exp.shared?.shortCopy}</p>
-                <BokunWidget
-                  bookingChannelUUID={bookingChannelUUID}
-                  widgetSrc={exp.bokun?.widgetSrc}
-                  ctaLabel={exp.shared?.ctaLabel || dict.common.bookNow}
+                <RouteMap
+                  labels={dict.routeMap}
+                  lockedRoute={exp.slug === 'sunset-cruise' ? 'sunset' : 'day'}
+                  compact
+                  dayStops={exp.slug !== 'sunset-cruise' ? d?.itinerary?.map((s) => s.stop) : undefined}
+                  sunsetStops={exp.slug === 'sunset-cruise' ? d?.itinerary?.map((s) => s.stop) : undefined}
                 />
-              </article>
-            ) : (
-              <article className="card rate-card" id="private">
-                <p className="eyebrow">{dict.detail.privateRate}</p>
-                <div className="rate-card__price">
-                  €{exp.private?.launchPrice} <small>{dict.hero.perBoat}</small>
-                </div>
-                <p style={{ fontSize: '0.92rem' }}>{exp.private?.shortCopy}</p>
-                <BokunWidget
-                  bookingChannelUUID={bookingChannelUUID}
-                  widgetSrc={exp.bokun?.widgetSrc}
-                  ctaLabel={exp.private?.ctaLabel || dict.common.bookNow}
-                />
-              </article>
-            )}
-
-            {variant === 'shared' ? (
-              <div className="rate-nudge">
-                <p>{dict.detail.orPrivateTitle}</p>
-                <a href={privateHref} className="btn btn--secondary btn--sm">
-                  {dict.detail.orPrivateCta}
-                </a>
               </div>
-            ) : (
-              <div className="rate-nudge">
-                <p>{dict.detail.orSharedTitle}</p>
-                <a href={sharedHref} className="btn btn--secondary btn--sm">
-                  {dict.detail.orSharedCta}
-                </a>
-              </div>
-            )}
-
-            <div className="rate-nudge">
-              <p>{dict.privateEnquiry.eventsNote}</p>
-              <a href={`${base}/special-occasions`} className="btn btn--secondary btn--sm">
-                {dict.privateEnquiry.ctaButton}
-              </a>
             </div>
-          </aside>
+          )}
+
+          {/* Includes */}
+          {!!d?.includes?.length && (
+            <div className="detail-section">
+              <h2>{dict.detail.includes}</h2>
+              <ul className="check-list">
+                {d.includes.map((i) => (
+                  <li key={i.id || i.item}>{i.item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Important information */}
+          {(!!d?.notSuitableFor?.length || !!d?.notAllowed?.length || !!d?.knowBeforeYouGo?.length) && (
+            <div className="detail-section">
+              <h2>{dict.detail.importantInfo}</h2>
+              {!!d?.notSuitableFor?.length && (
+                <>
+                  <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.notSuitable}</h3>
+                  <ul className="x-list">
+                    {d.notSuitableFor.map((i) => (
+                      <li key={i.id || i.item}>{i.item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {!!d?.notAllowed?.length && (
+                <>
+                  <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.notAllowed}</h3>
+                  <ul className="x-list">
+                    {d.notAllowed.map((i) => (
+                      <li key={i.id || i.item}>{i.item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {!!d?.knowBeforeYouGo?.length && (
+                <>
+                  <h3 style={{ fontSize: '1rem', margin: '0.8rem 0 0.4rem' }}>{dict.detail.knowBefore}</h3>
+                  <ul className="check-list">
+                    {d.knowBeforeYouGo.map((i) => (
+                      <li key={i.id || i.item}>{i.item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Meeting point */}
+          <div className="detail-section">
+            <h2>{dict.detail.meetingPoint}</h2>
+            <div className="meeting">
+              <div>
+                <p>
+                  {settings?.meetingPoint?.name || 'Douro Marina | Afurada'} ·{' '}
+                  {(settings?.meetingPoint?.addressLines || []).map((l) => l.line).join(' · ') ||
+                    'Rua da Praia 430 · Gate B · 4400-354 Vila Nova de Gaia · Porto, Portugal'}
+                </p>
+                <p style={{ fontWeight: 500, color: '#3f3d38', marginTop: '0.4rem' }}>
+                  {settings?.meetingPoint?.arrivalNote || 'Please arrive 10 minutes before departure.'}
+                </p>
+                {settings?.meetingPoint?.mapsUrl && (
+                  <p style={{ marginTop: '0.8rem' }}>
+                    <a
+                      href={settings.meetingPoint.mapsUrl}
+                      className="link-gold"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {dict.detail.openInMaps}
+                    </a>
+                  </p>
+                )}
+              </div>
+              <div className="map-embed">
+                <iframe
+                  title="Douro Wonders — meeting point map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2738.552023923769!2d-8.652937472880195!3d41.14224762933593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd2465d7be3f7e91%3A0xcb3ec2ec26c38215!2sDouro%20Wonders%20-%20Authentic%20Experiences%20-%20Daytime%20%26%20Sunset%20River%20Boat%20Cruise!5e1!3m2!1spt-PT!2spt!4v1787863962258!5m2!1spt-PT!2spt"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
       </section>
 
@@ -364,6 +409,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}
@@ -374,11 +420,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
         rnaat={settings?.legal?.rnaat}
       />
 
-      <div className="sticky-cta">
-        <a href={`#book`} className="btn btn--primary">
-          {home?.hero?.mobileStickyCta || 'Check Availability'}
-        </a>
-      </div>
+      <StickyBookingCta label={home?.hero?.mobileStickyCta || 'Check Availability'} />
 
       {/* Structured data: product + breadcrumbs */}
       <script

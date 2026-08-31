@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MobileMenu } from './MobileMenu'
 import { AnnounceWave } from './AnnounceWave'
+import { smoothScrollTo } from '@/lib/smoothScroll'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 
@@ -35,7 +36,7 @@ export function Header({
     <>
       {announcement && (
         <div className="announce">
-          <a href={`${base}#experiences`}>{announcement}</a>
+          <a href={`${base}#experiences`} onClick={smoothScrollTo}>{announcement}</a>
           <AnnounceWave />
         </div>
       )}
@@ -65,15 +66,21 @@ export function Header({
             />
           </Link>
           <nav className="site-header__nav" aria-label="Main">
-            <a href={`${base}#experiences`}>{dict.nav.experiences}</a>
-            <a href={`${base}#route`}>{dict.nav.route}</a>
-            <a href={`${base}#boat`}>{dict.nav.boat}</a>
-            <Link href={`${base}/about`}>{dict.nav.about}</Link>
+            <div className="nav-dropdown">
+              <a href={`${base}#experiences`} onClick={smoothScrollTo}>{dict.nav.experiences}</a>
+              <div className="nav-dropdown__panel">
+                <Link href={`${base}/day-cruise`}>{dict.nav.dayCruise}</Link>
+                <Link href={`${base}/sunset-cruise`}>{dict.nav.sunsetCruise}</Link>
+              </div>
+            </div>
             <Link href={`${base}/special-occasions`}>{dict.nav.specialOccasions}</Link>
-            <a href={`${base}#faq`}>{dict.nav.faq}</a>
+            <a href={`${base}#route`} onClick={smoothScrollTo}>{dict.nav.route}</a>
+            <a href={`${base}#boat`} onClick={smoothScrollTo}>{dict.nav.boat}</a>
+            <a href={`${base}#faq`} onClick={smoothScrollTo}>{dict.nav.faq}</a>
+            <Link href={`${base}/about`}>{dict.nav.about}</Link>
             <Link href={`${base}/blog`}>{dict.nav.blog}</Link>
             <LanguageSwitcher locale={locale} label={dict.common.language} />
-            <a href={`${base}#experiences`} className="btn btn--primary">
+            <a href={`${base}#experiences`} className="btn btn--primary" onClick={smoothScrollTo}>
               {dict.nav.bookNow}
             </a>
           </nav>

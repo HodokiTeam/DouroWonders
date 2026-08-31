@@ -50,6 +50,7 @@ export const Experiences: CollectionConfig = {
       type: 'group',
       label: 'Private rate (whole boat)',
       fields: [
+        { name: 'referencePrice', type: 'number', admin: { description: 'Reference price in € per boat' } },
         { name: 'launchPrice', type: 'number', required: true, admin: { description: 'Launch price in € per boat' } },
         { name: 'subtitle', type: 'text', localized: true, admin: { description: 'e.g. "Private Douro Day Cruise"' } },
         { name: 'shortCopy', type: 'textarea', required: true, localized: true },
@@ -70,6 +71,12 @@ export const Experiences: CollectionConfig = {
           },
         },
       ],
+    },
+    {
+      name: 'reviewUrl',
+      type: 'text',
+      label: 'Tripadvisor review link',
+      admin: { description: 'Link guests use to leave a Tripadvisor review for this specific experience.' },
     },
     {
       name: 'details',

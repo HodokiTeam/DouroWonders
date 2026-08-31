@@ -22,6 +22,7 @@ type FooterProps = {
   phones?: Array<{ label?: string | null; number: string }> | null
   whatsapp?: string | null
   rnaat?: string | null
+  tagline?: string | null
 }
 
 export function Footer({
@@ -35,6 +36,7 @@ export function Footer({
   phones,
   whatsapp,
   rnaat,
+  tagline,
 }: FooterProps) {
   const base = `/${locale}`
   return (
@@ -51,7 +53,7 @@ export function Footer({
               height={110}
               style={{ height: 110, width: 'auto' }}
             />
-            <p>{dict.footer.tagline}</p>
+            <p>{tagline || dict.footer.tagline}</p>
             <div className="site-footer__social">
               {social?.instagram && (
                 <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">

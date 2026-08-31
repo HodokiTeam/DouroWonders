@@ -55,13 +55,34 @@ export default async function SpecialOccasionsPage({ params }: { params: Promise
             <h1 className="section-title">{page?.title || dict.privateEnquiry.title}</h1>
             <p>{page?.intro || dict.privateEnquiry.body}</p>
             {!!page?.ideas?.length && (
-              <ul className="occasion-grid">
-                {page.ideas.map((idea, i) => (
-                  <li key={i}>{idea.text}</li>
-                ))}
-              </ul>
+              <>
+                <h2 className="occasions-teaser__label" style={{ marginTop: '2rem' }}>
+                  {dict.homeSpecialOccasions.occasionsLabel}
+                </h2>
+                <ul className="occasions-teaser__list">
+                  {page.ideas.map((idea, i) => (
+                    <li key={i}>{idea.text}</li>
+                  ))}
+                </ul>
+              </>
             )}
-            <p className="private-cta__events">{dict.privateEnquiry.eventsNote}</p>
+            {!!page?.extras?.length && (
+              <>
+                <h2 className="occasions-teaser__label" style={{ marginTop: '2rem' }}>
+                  {dict.homeSpecialOccasions.extrasLabel}
+                </h2>
+                <ul className="occasions-teaser__list">
+                  {page.extras.map((extra, i) => (
+                    <li key={i}>{extra.text}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <p className="private-cta__events">
+              {page?.closingLine || dict.homeSpecialOccasions.closingLine}
+              <br />
+              {dict.privateEnquiry.eventsNote}
+            </p>
           </div>
           <PrivateEnquiryForm dict={dict.privateEnquiry} contactDict={dict.contact} privacyHref={`/${locale}/privacy-policy`} />
         </div>
@@ -70,6 +91,7 @@ export default async function SpecialOccasionsPage({ params }: { params: Promise
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

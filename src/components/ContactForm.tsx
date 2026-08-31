@@ -27,6 +27,7 @@ export function ContactForm({
 
     const name = String(fd.get('name') || '')
     const email = String(fd.get('email') || '')
+    const phone = String(fd.get('phone') || '')
     const subject = String(fd.get('subject') || '')
     const message = String(fd.get('message') || '')
 
@@ -37,7 +38,7 @@ export function ContactForm({
       const res = await fetch('/api/contact-form', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, phone, subject, message }),
       })
       if (!res.ok) throw new Error('failed')
       setStatus('sent')
@@ -71,6 +72,10 @@ export function ContactForm({
           <input name="email" type="email" required autoComplete="email" placeholder={dict.emailPlaceholder} />
         </label>
       </div>
+      <label>
+        {dict.phoneOptional}
+        <input name="phone" type="tel" autoComplete="tel" placeholder={dict.phonePlaceholder} />
+      </label>
       <label>
         {dict.subject}
         <input name="subject" type="text" placeholder={dict.subjectPlaceholder} />

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { locales, localeNames, isLocale, type Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { usePathname, useRouter } from 'next/navigation'
+import { smoothScrollTo } from '@/lib/smoothScroll'
 
 export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [open, setOpen] = useState(false)
@@ -35,13 +36,15 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
     router.push(segments.join('/') || `/${next}`)
   }
 
-  const links: Array<{ href: string; label: string; internal?: boolean }> = [
+  const links: Array<{ href: string; label: string; internal?: boolean; sub?: boolean }> = [
     { href: `${base}#experiences`, label: dict.nav.experiences },
+    { href: `${base}/day-cruise`, label: dict.nav.dayCruise, internal: true, sub: true },
+    { href: `${base}/sunset-cruise`, label: dict.nav.sunsetCruise, internal: true, sub: true },
+    { href: `${base}/special-occasions`, label: dict.nav.specialOccasions, internal: true },
     { href: `${base}#route`, label: dict.nav.route },
     { href: `${base}#boat`, label: dict.nav.boat },
-    { href: `${base}/about`, label: dict.nav.about, internal: true },
-    { href: `${base}/special-occasions`, label: dict.nav.specialOccasions, internal: true },
     { href: `${base}#faq`, label: dict.nav.faq },
+    { href: `${base}/about`, label: dict.nav.about, internal: true },
     { href: `${base}/blog`, label: dict.nav.blog, internal: true },
   ]
 
@@ -54,6 +57,7 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
         aria-expanded={open}
         onClick={() => setOpen(true)}
       >
+        <span aria-hidden="true" />
         <span aria-hidden="true" />
         <span aria-hidden="true" />
       </button>
@@ -72,11 +76,23 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
           <nav className="mobilemenu__links" aria-label="Main">
             {links.map((l) =>
               l.internal ? (
-                <Link key={l.label} href={l.href} onClick={() => setOpen(false)}>
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  className={l.sub ? 'mobilemenu__sub' : undefined}
+                  onClick={() => setOpen(false)}
+                >
                   {l.label}
                 </Link>
               ) : (
-                <a key={l.label} href={l.href} onClick={() => setOpen(false)}>
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={(e) => {
+                    smoothScrollTo(e)
+                    setOpen(false)
+                  }}
+                >
                   {l.label}
                 </a>
               ),
@@ -99,7 +115,14 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
             </div>
           </div>
 
-          <a href={`${base}#experiences`} className="btn btn--primary mobilemenu__cta" onClick={() => setOpen(false)}>
+          <a
+            href={`${base}#experiences`}
+            className="btn btn--primary mobilemenu__cta"
+            onClick={(e) => {
+              smoothScrollTo(e)
+              setOpen(false)
+            }}
+          >
             {dict.nav.bookNow}
           </a>
         </div>

@@ -170,6 +170,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

@@ -97,6 +97,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

@@ -116,6 +116,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
       <Footer
         locale={locale}
         dict={dict}
+        tagline={settings?.footerTagline}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

@@ -182,6 +182,10 @@ export interface Experience {
   };
   private: {
     /**
+     * Reference price in € per boat
+     */
+    referencePrice?: number | null;
+    /**
      * Launch price in € per boat
      */
     launchPrice: number;
@@ -201,6 +205,10 @@ export interface Experience {
      */
     widgetSrc?: string | null;
   };
+  /**
+   * Link guests use to leave a Tripadvisor review for this specific experience.
+   */
+  reviewUrl?: string | null;
   details?: {
     /**
      * e.g. "English, French, Portuguese, Spanish, German"
@@ -404,6 +412,7 @@ export interface ContactMessage {
   id: number;
   name: string;
   email: string;
+  phone?: string | null;
   subject?: string | null;
   message: string;
   status?: ('new' | 'replied' | 'closed') | null;
@@ -551,6 +560,7 @@ export interface ExperiencesSelect<T extends boolean = true> {
   private?:
     | T
     | {
+        referencePrice?: T;
         launchPrice?: T;
         subtitle?: T;
         shortCopy?: T;
@@ -561,6 +571,7 @@ export interface ExperiencesSelect<T extends boolean = true> {
     | {
         widgetSrc?: T;
       };
+  reviewUrl?: T;
   details?:
     | T
     | {
@@ -658,6 +669,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface ContactMessagesSelect<T extends boolean = true> {
   name?: T;
   email?: T;
+  phone?: T;
   subject?: T;
   message?: T;
   status?: T;
@@ -783,9 +795,26 @@ export interface Homepage {
     secondaryCta: string;
     mobileStickyCta: string;
     /**
-     * First / main hero photo.
+     * Fallback photo, used only if the slideshow below is empty.
      */
     image?: (number | null) | Media;
+    /**
+     * The rotating hero photos, in order. Add as many as you like.
+     */
+    slides?:
+      | {
+          image: number | Media;
+          /**
+           * Describes the photo — used for SEO and screen readers.
+           */
+          alt: string;
+          /**
+           * Short caption shown over the photo, e.g. "Porto · Ponte D. Luís I".
+           */
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   campaign?: {
     /**
@@ -893,6 +922,31 @@ export interface Homepage {
       photo?: (number | null) | Media;
     };
   };
+  reviewsSection?: {
+    /**
+     * CTA link — "Read our Google reviews".
+     */
+    googleReviewsUrl?: string | null;
+    /**
+     * Secondary CTA link to the Tripadvisor profile.
+     */
+    tripadvisorUrl?: string | null;
+    /**
+     * Only add reviews actually left by real guests.
+     */
+    reviews?:
+      | {
+          rating: number;
+          /**
+           * Guest's first name.
+           */
+          name: string;
+          source: 'google' | 'tripadvisor';
+          quote: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   faqSection?: {
     /**
      * e.g. "Frequently asked questions"
@@ -914,6 +968,10 @@ export interface SiteSetting {
     description: string;
   };
   email: string;
+  /**
+   * Short line shown under the logo in the footer.
+   */
+  footerTagline?: string | null;
   /**
    * Superseded — the contact form now sends through the transactional email API configured on the server. Messages arrive by email and are always saved under Contact Messages.
    */
@@ -992,7 +1050,7 @@ export interface SpecialOccasion {
   title?: string | null;
   intro?: string | null;
   /**
-   * Short list of occasion ideas shown as bullets, e.g. "Marriage proposals".
+   * Short list of occasion ideas shown as bullets, e.g. "Wedding Proposals".
    */
   ideas?:
     | {
@@ -1000,6 +1058,19 @@ export interface SpecialOccasion {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Short list of optional add-ons shown as bullets, e.g. "Photographer".
+   */
+  extras?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "Have something else in mind? Tell us what you're planning."
+   */
+  closingLine?: string | null;
   image?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1018,6 +1089,14 @@ export interface HomepageSelect<T extends boolean = true> {
         secondaryCta?: T;
         mobileStickyCta?: T;
         image?: T;
+        slides?:
+          | T
+          | {
+              image?: T;
+              alt?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   campaign?:
     | T
@@ -1113,6 +1192,21 @@ export interface HomepageSelect<T extends boolean = true> {
               photo?: T;
             };
       };
+  reviewsSection?:
+    | T
+    | {
+        googleReviewsUrl?: T;
+        tripadvisorUrl?: T;
+        reviews?:
+          | T
+          | {
+              rating?: T;
+              name?: T;
+              source?: T;
+              quote?: T;
+              id?: T;
+            };
+      };
   faqSection?:
     | T
     | {
@@ -1135,6 +1229,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         description?: T;
       };
   email?: T;
+  footerTagline?: T;
   formEndpoint?: T;
   whatsapp?: T;
   phones?:
@@ -1196,6 +1291,13 @@ export interface SpecialOccasionsSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  extras?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  closingLine?: T;
   image?: T;
   updatedAt?: T;
   createdAt?: T;

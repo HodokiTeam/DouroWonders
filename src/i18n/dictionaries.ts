@@ -14,6 +14,8 @@ export type Dictionary = {
     about: string
     blog: string
     specialOccasions: string
+    dayCruise: string
+    sunsetCruise: string
     bookNow: string
   }
   hero: {
@@ -78,6 +80,31 @@ export type Dictionary = {
     orPrivateCta: string
     orSharedTitle: string
     orSharedCta: string
+    readFullDescription: string
+    viewFullRoute: string
+    reviews: string
+    leaveReview: string
+    viewAllPhotos: string
+  }
+  homeSpecialOccasions: {
+    eyebrow: string
+    title: string
+    occasionsLabel: string
+    extrasLabel: string
+    closingLine: string
+    cta: string
+  }
+  homeAbout: {
+    eyebrow: string
+    title: string
+    intro: string
+    cta: string
+  }
+  homeReviews: {
+    eyebrow: string
+    title: string
+    cta: string
+    tripadvisorCta: string
   }
   privateEnquiry: {
     eyebrow: string
@@ -118,6 +145,8 @@ export type Dictionary = {
     message: string
     namePlaceholder: string
     emailPlaceholder: string
+    phoneOptional: string
+    phonePlaceholder: string
     subjectPlaceholder: string
     messagePlaceholder: string
     send: string
@@ -167,6 +196,8 @@ const en: Dictionary = {
     about: 'About',
     blog: 'Blog',
     specialOccasions: 'Special Occasions',
+    dayCruise: 'Day Cruise',
+    sunsetCruise: 'Sunset Cruise',
     bookNow: 'Book Now',
   },
   hero: { sharedCruise: 'Shared cruise', privateCruise: 'Private cruise', perPerson: 'per person', perBoat: 'per boat', from: 'from', eyebrow: 'The Douro — No.01' },
@@ -191,7 +222,7 @@ const en: Dictionary = {
     blog: 'Blog',
   },
   faqSections: {
-    booking: 'Booking & the cruise',
+    booking: 'Authentic Experience & Booking',
     meetingPoint: 'Meeting point',
     gettingHere: 'Getting here',
     onboard: 'Onboard',
@@ -228,6 +259,32 @@ const en: Dictionary = {
     orPrivateCta: 'See the private cruise',
     orSharedTitle: 'Prefer to share it with others?',
     orSharedCta: 'See the shared cruise',
+    readFullDescription: 'Read full description',
+    viewFullRoute: 'View full route & landmarks',
+    reviews: 'reviews',
+    leaveReview: 'Leave a review on Tripadvisor',
+    viewAllPhotos: 'View all',
+  },
+  homeSpecialOccasions: {
+    eyebrow: 'Private Experiences',
+    title: 'Special Occasions',
+    occasionsLabel: 'Occasions',
+    extrasLabel: 'Optional Extras',
+    closingLine: "Have something else in mind? Tell us what you're planning and we'll see what we can arrange.",
+    cta: 'Plan Something Special',
+  },
+  homeAbout: {
+    eyebrow: 'Hosted by Locals',
+    title: 'Meet the people behind Douro Wonders',
+    intro:
+      'Douro Wonders was created by Inês Veloso and António Ferrer to share the river they know personally — combining maritime experience, local knowledge and genuine hosting.',
+    cta: 'Our Story',
+  },
+  homeReviews: {
+    eyebrow: 'Guest Stories',
+    title: 'What guests say about Douro Wonders',
+    cta: 'Read our Google reviews',
+    tripadvisorCta: 'or on Tripadvisor',
   },
   privateEnquiry: {
     eyebrow: 'Private cruise',
@@ -268,6 +325,8 @@ const en: Dictionary = {
     message: 'Message',
     namePlaceholder: 'Your name',
     emailPlaceholder: 'you@example.com',
+    phoneOptional: 'Phone / WhatsApp (optional)',
+    phonePlaceholder: '+351 900 000 000',
     subjectPlaceholder: 'e.g. Birthday on board, group of 8…',
     messagePlaceholder: 'Tell us how we can help…',
     send: 'Send Message',
@@ -317,16 +376,18 @@ const en: Dictionary = {
 const pt: Dictionary = {
   nav: {
     experiences: 'Experiências',
-    boat: 'A Wondy',
+    boat: 'O Barco',
     included: 'O que inclui',
     route: 'Percurso',
     faq: 'FAQ',
     about: 'Sobre nós',
     blog: 'Blog',
     specialOccasions: 'Ocasiões Especiais',
+    dayCruise: 'Cruzeiro Diurno',
+    sunsetCruise: 'Cruzeiro Pôr do Sol',
     bookNow: 'Reservar',
   },
-  hero: { sharedCruise: 'Cruzeiro partilhado', privateCruise: 'Cruzeiro privado', perPerson: 'por pessoa', perBoat: 'por embarcação', from: 'desde', eyebrow: 'O Douro — No.01' },
+  hero: { sharedCruise: 'Passeio partilhado', privateCruise: 'Passeio privado', perPerson: 'por pessoa', perBoat: 'por embarcação', from: 'desde', eyebrow: 'O Douro — No.01' },
   trust: {
     freeCancellation: 'Cancelamento gratuito até 24h antes',
     welcomeDrink: 'Porto Tónico de boas-vindas incluído',
@@ -348,7 +409,7 @@ const pt: Dictionary = {
     blog: 'Blog',
   },
   faqSections: {
-    booking: 'Reserva e o cruzeiro',
+    booking: 'Experiência Autêntica & Reserva',
     meetingPoint: 'Ponto de encontro',
     gettingHere: 'Como chegar',
     onboard: 'A bordo',
@@ -377,8 +438,8 @@ const pt: Dictionary = {
     knowBefore: 'Antes de embarcar',
     routeNote:
       'Apenas para referência. O percurso pode variar consoante as condições do rio, meteorológicas e de segurança.',
-    sharedRate: 'Cruzeiro partilhado · por pessoa',
-    privateRate: 'Cruzeiro privado · embarcação inteira',
+    sharedRate: 'Passeio partilhado · por pessoa',
+    privateRate: 'Passeio privado · embarcação inteira',
     customDetails: 'Para ocasiões especiais ou detalhes personalizados,',
     speakWithUs: 'fale connosco antes de reservar',
     openInMaps: 'Abrir no Google Maps',
@@ -386,6 +447,32 @@ const pt: Dictionary = {
     orPrivateCta: 'Ver o cruzeiro privado',
     orSharedTitle: 'Prefere partilhar com outros?',
     orSharedCta: 'Ver o cruzeiro partilhado',
+    readFullDescription: 'Ler a descrição completa',
+    viewFullRoute: 'Ver percurso completo e pontos de interesse',
+    reviews: 'avaliações',
+    leaveReview: 'Deixe uma avaliação no Tripadvisor',
+    viewAllPhotos: 'Ver todas',
+  },
+  homeSpecialOccasions: {
+    eyebrow: 'Experiências Privadas',
+    title: 'Ocasiões Especiais',
+    occasionsLabel: 'Ocasiões',
+    extrasLabel: 'Extras Opcionais',
+    closingLine: 'Tem outra ideia em mente? Diga-nos o que está a planear e veremos o que podemos organizar.',
+    cta: 'Planeie Algo Especial',
+  },
+  homeAbout: {
+    eyebrow: 'Anfitriões Locais',
+    title: 'Conheça quem está por trás da Douro Wonders',
+    intro:
+      'A Douro Wonders foi criada por Inês Veloso e António Ferrer para partilhar o rio que conhecem pessoalmente — combinando experiência marítima, conhecimento local e uma hospitalidade genuína.',
+    cta: 'A Nossa História',
+  },
+  homeReviews: {
+    eyebrow: 'Histórias de Hóspedes',
+    title: 'O que dizem sobre a Douro Wonders',
+    cta: 'Ver as nossas reviews no Google',
+    tripadvisorCta: 'ou no Tripadvisor',
   },
   privateEnquiry: {
     eyebrow: 'Cruzeiro privado',
@@ -426,6 +513,8 @@ const pt: Dictionary = {
     message: 'Mensagem',
     namePlaceholder: 'O seu nome',
     emailPlaceholder: 'oseu@email.com',
+    phoneOptional: 'Telefone / WhatsApp (opcional)',
+    phonePlaceholder: '+351 900 000 000',
     subjectPlaceholder: 'ex.: Aniversário a bordo, grupo de 8…',
     messagePlaceholder: 'Diga-nos como podemos ajudar…',
     send: 'Enviar mensagem',
@@ -482,6 +571,8 @@ const fr: Dictionary = {
     about: 'À propos',
     blog: 'Blog',
     specialOccasions: 'Occasions Spéciales',
+    dayCruise: 'Croisière de jour',
+    sunsetCruise: 'Croisière au coucher du soleil',
     bookNow: 'Réserver',
   },
   hero: { sharedCruise: 'Croisière partagée', privateCruise: 'Croisière privée', perPerson: 'par personne', perBoat: 'par bateau', from: 'à partir de', eyebrow: 'Le Douro — No.01' },
@@ -506,7 +597,7 @@ const fr: Dictionary = {
     blog: 'Blog',
   },
   faqSections: {
-    booking: 'Réservation et croisière',
+    booking: 'Expérience Authentique & Réservation',
     meetingPoint: 'Point de rendez-vous',
     gettingHere: 'Comment venir',
     onboard: 'À bord',
@@ -544,6 +635,33 @@ const fr: Dictionary = {
     orPrivateCta: 'Voir la croisière privée',
     orSharedTitle: 'Vous préférez la partager avec d’autres ?',
     orSharedCta: 'Voir la croisière partagée',
+    readFullDescription: 'Lire la description complète',
+    viewFullRoute: "Voir l'itinéraire complet et les sites remarquables",
+    reviews: 'avis',
+    leaveReview: 'Laisser un avis sur Tripadvisor',
+    viewAllPhotos: 'Tout voir',
+  },
+  homeSpecialOccasions: {
+    eyebrow: 'Expériences Privées',
+    title: 'Occasions spéciales',
+    occasionsLabel: 'Occasions',
+    extrasLabel: 'Extras en option',
+    closingLine:
+      'Vous avez autre chose en tête ? Dites-nous ce que vous prévoyez et nous verrons ce que nous pouvons organiser.',
+    cta: 'Planifiez quelque chose de spécial',
+  },
+  homeAbout: {
+    eyebrow: 'Un accueil local',
+    title: "Rencontrez l'équipe derrière Douro Wonders",
+    intro:
+      "Douro Wonders a été créée par Inês Veloso et António Ferrer pour partager le fleuve qu'ils connaissent personnellement — alliant expérience maritime, connaissance locale et un accueil authentique.",
+    cta: 'Notre histoire',
+  },
+  homeReviews: {
+    eyebrow: 'Témoignages',
+    title: 'Ce que disent nos clients de Douro Wonders',
+    cta: 'Voir nos avis Google',
+    tripadvisorCta: 'ou sur Tripadvisor',
   },
   privateEnquiry: {
     eyebrow: 'Croisière privée',
@@ -584,6 +702,8 @@ const fr: Dictionary = {
     message: 'Message',
     namePlaceholder: 'Votre nom',
     emailPlaceholder: 'vous@exemple.com',
+    phoneOptional: 'Téléphone / WhatsApp (facultatif)',
+    phonePlaceholder: '+351 900 000 000',
     subjectPlaceholder: 'ex. : Anniversaire à bord, groupe de 8…',
     messagePlaceholder: 'Dites-nous comment nous pouvons vous aider…',
     send: 'Envoyer le message',
@@ -640,6 +760,8 @@ const es: Dictionary = {
     about: 'Nosotros',
     blog: 'Blog',
     specialOccasions: 'Ocasiones Especiales',
+    dayCruise: 'Crucero Diurno',
+    sunsetCruise: 'Crucero Atardecer',
     bookNow: 'Reservar',
   },
   hero: { sharedCruise: 'Crucero compartido', privateCruise: 'Crucero privado', perPerson: 'por persona', perBoat: 'por barco', from: 'desde', eyebrow: 'El Duero — No.01' },
@@ -664,7 +786,7 @@ const es: Dictionary = {
     blog: 'Blog',
   },
   faqSections: {
-    booking: 'Reserva y el crucero',
+    booking: 'Experiencia Auténtica y Reserva',
     meetingPoint: 'Punto de encuentro',
     gettingHere: 'Cómo llegar',
     onboard: 'A bordo',
@@ -702,6 +824,32 @@ const es: Dictionary = {
     orPrivateCta: 'Ver el crucero privado',
     orSharedTitle: '¿Prefieres compartirlo con otros?',
     orSharedCta: 'Ver el crucero compartido',
+    readFullDescription: 'Leer la descripción completa',
+    viewFullRoute: 'Ver la ruta completa y los puntos de interés',
+    reviews: 'reseñas',
+    leaveReview: 'Deja una reseña en Tripadvisor',
+    viewAllPhotos: 'Ver todas',
+  },
+  homeSpecialOccasions: {
+    eyebrow: 'Experiencias Privadas',
+    title: 'Ocasiones especiales',
+    occasionsLabel: 'Ocasiones',
+    extrasLabel: 'Extras opcionales',
+    closingLine: '¿Tienes otra idea en mente? Cuéntanos qué estás planeando y veremos qué podemos organizar.',
+    cta: 'Planifica algo especial',
+  },
+  homeAbout: {
+    eyebrow: 'Anfitriones locales',
+    title: 'Conoce a las personas detrás de Douro Wonders',
+    intro:
+      'Douro Wonders fue creada por Inês Veloso y António Ferrer para compartir el río que conocen personalmente — combinando experiencia marítima, conocimiento local y una hospitalidad genuina.',
+    cta: 'Nuestra historia',
+  },
+  homeReviews: {
+    eyebrow: 'Historias de huéspedes',
+    title: 'Lo que dicen sobre Douro Wonders',
+    cta: 'Ver nuestras reseñas en Google',
+    tripadvisorCta: 'o en Tripadvisor',
   },
   privateEnquiry: {
     eyebrow: 'Crucero privado',
@@ -742,6 +890,8 @@ const es: Dictionary = {
     message: 'Mensaje',
     namePlaceholder: 'Tu nombre',
     emailPlaceholder: 'tu@ejemplo.com',
+    phoneOptional: 'Teléfono / WhatsApp (opcional)',
+    phonePlaceholder: '+351 900 000 000',
     subjectPlaceholder: 'p. ej.: Cumpleaños a bordo, grupo de 8…',
     messagePlaceholder: 'Cuéntanos cómo podemos ayudarte…',
     send: 'Enviar mensaje',
@@ -798,6 +948,8 @@ const de: Dictionary = {
     about: 'Über uns',
     blog: 'Blog',
     specialOccasions: 'Besondere Anlässe',
+    dayCruise: 'Day Cruise',
+    sunsetCruise: 'Sunset Cruise',
     bookNow: 'Buchen',
   },
   hero: { sharedCruise: 'Gemeinsame Fahrt', privateCruise: 'Private Fahrt', perPerson: 'pro Person', perBoat: 'pro Boot', from: 'ab', eyebrow: 'Der Douro — Nr.01' },
@@ -822,7 +974,7 @@ const de: Dictionary = {
     blog: 'Blog',
   },
   faqSections: {
-    booking: 'Buchung & die Fahrt',
+    booking: 'Authentisches Erlebnis & Buchung',
     meetingPoint: 'Treffpunkt',
     gettingHere: 'Anreise',
     onboard: 'An Bord',
@@ -860,6 +1012,33 @@ const de: Dictionary = {
     orPrivateCta: 'Private Fahrt ansehen',
     orSharedTitle: 'Lieber mit anderen teilen?',
     orSharedCta: 'Gemeinsame Fahrt ansehen',
+    readFullDescription: 'Vollständige Beschreibung lesen',
+    viewFullRoute: 'Vollständige Route & Sehenswürdigkeiten ansehen',
+    reviews: 'Bewertungen',
+    leaveReview: 'Bewertung auf Tripadvisor hinterlassen',
+    viewAllPhotos: 'Alle ansehen',
+  },
+  homeSpecialOccasions: {
+    eyebrow: 'Private Erlebnisse',
+    title: 'Besondere Anlässe',
+    occasionsLabel: 'Anlässe',
+    extrasLabel: 'Optionale Extras',
+    closingLine:
+      'Haben Sie etwas anderes im Sinn? Erzählen Sie uns, was Sie planen, und wir sehen, was sich einrichten lässt.',
+    cta: 'Planen Sie etwas Besonderes',
+  },
+  homeAbout: {
+    eyebrow: 'Lokale Gastgeber',
+    title: 'Lernen Sie die Menschen hinter Douro Wonders kennen',
+    intro:
+      'Douro Wonders wurde von Inês Veloso und António Ferrer gegründet, um den Fluss, den sie persönlich kennen, zu teilen — mit maritimer Erfahrung, lokalem Wissen und echter Gastfreundschaft.',
+    cta: 'Unsere Geschichte',
+  },
+  homeReviews: {
+    eyebrow: 'Gästestimmen',
+    title: 'Was Gäste über Douro Wonders sagen',
+    cta: 'Unsere Google-Bewertungen ansehen',
+    tripadvisorCta: 'oder auf Tripadvisor',
   },
   privateEnquiry: {
     eyebrow: 'Private Fahrt',
@@ -900,6 +1079,8 @@ const de: Dictionary = {
     message: 'Nachricht',
     namePlaceholder: 'Ihr Name',
     emailPlaceholder: 'sie@beispiel.com',
+    phoneOptional: 'Telefon / WhatsApp (optional)',
+    phonePlaceholder: '+351 900 000 000',
     subjectPlaceholder: 'z. B. Geburtstag an Bord, Gruppe von 8…',
     messagePlaceholder: 'Sagen Sie uns, wie wir helfen können…',
     send: 'Nachricht senden',

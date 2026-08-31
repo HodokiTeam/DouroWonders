@@ -196,15 +196,24 @@ export function RouteMap({
   labels,
   dayStops,
   sunsetStops,
+  lockedRoute,
+  compact,
 }: {
   labels?: { day: string; sunset: string }
   /** Itinerary names from the CMS, in visit order (already translated). */
   dayStops?: string[]
   sunsetStops?: string[]
+  /** Fixes the map to one route and hides the Day/Sunset toggle — for use on
+      a page that's already about one specific experience. */
+  lockedRoute?: 'day' | 'sunset'
+  /** Smaller companion map (e.g. beside the itinerary) — drops the stop
+      chips and caption, which the itinerary text already covers. */
+  compact?: boolean
 }) {
-  const [route, setRoute] = useState<'day' | 'sunset'>('day')
+  const [route, setRoute] = useState<'day' | 'sunset'>(lockedRoute || 'day')
   const [active, setActive] = useState(0)
   const [started, setStarted] = useState(false)
+  const [showAllChips, setShowAllChips] = useState(false)
   const playing = useRef(true)
   const wrapRef = useRef<HTMLDivElement>(null)
 
@@ -224,8 +233,23 @@ export function RouteMap({
   // Reset when switching route
   useEffect(() => {
     setActive(0)
+    setShowAllChips(false)
     playing.current = true
   }, [route])
+
+  // The chip list gets unwieldy past ~29 stops — show start, a short middle
+  // preview and the end by default, with a button to expand the rest. The
+  // map itself (dots + trail) always draws every stop; only this list below
+  // it is trimmed.
+  const CHIP_PREVIEW_EDGE = 3
+  const CHIP_THRESHOLD = 8
+  const visibleChipIndices = useMemo(() => {
+    if (showAllChips || visits.length <= CHIP_THRESHOLD) return visits.map((_, i) => i)
+    const head = Array.from({ length: CHIP_PREVIEW_EDGE }, (_, i) => i)
+    const tail = Array.from({ length: CHIP_PREVIEW_EDGE }, (_, i) => visits.length - CHIP_PREVIEW_EDGE + i)
+    return [...head, ...tail]
+  }, [visits, showAllChips])
+  const hiddenChipCount = visits.length - visibleChipIndices.length
 
   // Start once the map is roughly in view. A scroll check rather than an
   // IntersectionObserver, so it also works when frames aren't being composited.
@@ -303,25 +327,27 @@ export function RouteMap({
   const current = visits[active]
 
   return (
-    <div className="routemap" ref={wrapRef}>
-      <div className="routemap__toggle" role="tablist" aria-label="Route">
-        <button
-          role="tab"
-          aria-selected={route === 'day'}
-          className={route === 'day' ? 'is-active' : ''}
-          onClick={() => setRoute('day')}
-        >
-          {labels?.day || 'Day Cruise'}
-        </button>
-        <button
-          role="tab"
-          aria-selected={route === 'sunset'}
-          className={route === 'sunset' ? 'is-active' : ''}
-          onClick={() => setRoute('sunset')}
-        >
-          {labels?.sunset || 'Sunset Cruise'}
-        </button>
-      </div>
+    <div className={`routemap${compact ? ' routemap--compact' : ''}`} ref={wrapRef}>
+      {!lockedRoute && (
+        <div className="routemap__toggle" role="tablist" aria-label="Route">
+          <button
+            role="tab"
+            aria-selected={route === 'day'}
+            className={route === 'day' ? 'is-active' : ''}
+            onClick={() => setRoute('day')}
+          >
+            {labels?.day || 'Day Cruise'}
+          </button>
+          <button
+            role="tab"
+            aria-selected={route === 'sunset'}
+            className={route === 'sunset' ? 'is-active' : ''}
+            onClick={() => setRoute('sunset')}
+          >
+            {labels?.sunset || 'Sunset Cruise'}
+          </button>
+        </div>
+      )}
 
       <div className="routemap__canvas">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -382,24 +408,43 @@ export function RouteMap({
         </svg>
       </div>
 
-      <div className="routemap__chips" role="tablist" aria-label="Route stops">
-        {visits.map((s, i) => (
-          <button
-            key={`${s.name}-${s.x}`}
-            role="tab"
-            aria-selected={i === active}
-            className={`routemap__chip ${i <= active ? 'is-reached' : ''} ${i === active ? 'is-active' : ''}`}
-            onClick={() => select(i)}
-          >
-            <span className="routemap__chip-num">{i + 1}</span>
-            <span className="routemap__chip-label">{s.name}</span>
-          </button>
-        ))}
-      </div>
+      {!compact && (
+        <>
+          <div className="routemap__chips" role="tablist" aria-label="Route stops">
+            {visibleChipIndices.map((i, pos) => {
+              const s = visits[i]
+              const prev = visibleChipIndices[pos - 1]
+              const hasGapBefore = prev !== undefined && i - prev > 1
+              return (
+                <React.Fragment key={`${s.name}-${s.x}`}>
+                  {hasGapBefore && (
+                    <button
+                      type="button"
+                      className="routemap__chip routemap__chip--more"
+                      onClick={() => setShowAllChips(true)}
+                    >
+                      +{hiddenChipCount}
+                    </button>
+                  )}
+                  <button
+                    role="tab"
+                    aria-selected={i === active}
+                    className={`routemap__chip ${i <= active ? 'is-reached' : ''} ${i === active ? 'is-active' : ''}`}
+                    onClick={() => select(i)}
+                  >
+                    <span className="routemap__chip-num">{i + 1}</span>
+                    <span className="routemap__chip-label">{s.name}</span>
+                  </button>
+                </React.Fragment>
+              )
+            })}
+          </div>
 
-      <p className="routemap__caption" aria-live="polite">
-        <strong>{current.name}</strong>
-      </p>
+          <p className="routemap__caption" aria-live="polite">
+            <strong>{current.name}</strong>
+          </p>
+        </>
+      )}
     </div>
   )
 }
