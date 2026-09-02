@@ -386,7 +386,12 @@ textarea:focus {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 30;
+  /* Higher than .sticky-cta (z-index: 40) — the mobile menu lives inside this
+     header, and a child's z-index only wins within its own ancestor's
+     stacking context. With the header itself below the sticky CTA, the CTA
+     poked through the full-screen menu overlay no matter how high the
+     menu's own z-index was set. */
+  z-index: 50;
   padding: 0.55rem 0;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: saturate(180%) blur(20px);
@@ -601,41 +606,30 @@ textarea:focus {
   font-size: 1rem;
   color: var(--warm-grey);
 }
-.mobilemenu__langs {
-  margin-top: auto;
-  padding: 1.6rem 0 1.2rem;
-}
-.mobilemenu__langs > span {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--muted-grey);
-  margin-bottom: 0.7rem;
-}
-.mobilemenu__langs div {
+/* Compact language toggle in the top bar, next to the close button — with
+   only 2 active locales this fits easily and is visible immediately, no
+   need to scroll the panel to find it (it used to sit at the bottom). */
+.mobilemenu__langs-inline {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
-.mobilemenu__langs button {
+.mobilemenu__langs-inline button {
   appearance: none;
   -webkit-appearance: none;
   background: transparent;
   border: 1px solid var(--light-sand);
   border-radius: var(--radius-pill);
-  padding: 0.4rem 0.95rem;
+  padding: 0.3rem 0.7rem;
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--warm-grey);
   cursor: pointer;
 }
-.mobilemenu__langs button.is-active {
+.mobilemenu__langs-inline button.is-active {
   background: var(--douro-gold);
   border-color: var(--douro-gold);
   color: var(--pure-white);
-  font-weight: 500;
 }
 .mobilemenu__cta {
   width: 100%;
@@ -1665,6 +1659,13 @@ textarea:focus {
 .exp-gallery--inline {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
+  /* Without an explicit row height, this stays an auto-sized track — the
+     thumbs sub-grid's own height:100% then has no definite value to resolve
+     against, so the images fall back to their natural size and spill out
+     past 300px into the content below. Repeating the height here as the row
+     track (not just the container) makes it definite for that percentage
+     chain to resolve correctly. */
+  grid-template-rows: 300px;
   gap: 0.6rem;
   height: 300px;
   margin-bottom: 0;
@@ -1708,6 +1709,7 @@ textarea:focus {
 @media (max-width: 700px) {
   .exp-gallery--inline {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     height: auto;
   }
   .exp-gallery__main {
@@ -1980,8 +1982,40 @@ textarea:focus {
   color: var(--champagne-gold);
 }
 
-.site-footer__bottom {
+.site-footer__cofinancing {
   border-top: 1px solid rgba(247, 246, 239, 0.12);
+  padding-top: 1.8rem;
+  margin-top: 1.8rem;
+}
+.site-footer__cofinancing p {
+  font-size: var(--fs-caption);
+  color: rgba(247, 246, 239, 0.6);
+  margin-bottom: 1rem;
+}
+.site-footer__cofinancing-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.9rem, 2.5vw, 1.5rem);
+}
+.site-footer__cofinancing-logos img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+@media (max-width: 640px) {
+  .site-footer__cofinancing-logos {
+    flex-wrap: nowrap;
+    gap: 0.7rem;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+  }
+  .site-footer__cofinancing-logos img {
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+.site-footer__bottom {
   padding-top: 1.8rem;
   display: flex;
   flex-wrap: wrap;
@@ -2347,7 +2381,12 @@ textarea:focus {
   margin-bottom: 0.9rem;
 }
 .post-cover {
+  /* Deliberately wider than the 44rem text column below (same as the hero
+     title above it) for a bit of visual rhythm — but not the full 1600px
+     site container, which made the text look oddly narrow by comparison. */
+  max-width: 56rem;
   margin-top: 2rem;
+  margin-inline: auto;
 }
 .post-cover img {
   width: 100%;
@@ -2484,19 +2523,31 @@ textarea:focus {
   color: var(--ink);
   margin-bottom: 0.5rem;
 }
+.exp-hero-plain__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.9rem;
+  row-gap: 0.3rem;
+}
 .exp-hero-plain__sub {
   font-size: var(--fs-sub);
   color: var(--warm-grey);
   max-width: 40rem;
 }
 .exp-hero-plain__rating {
-  margin-top: 0.9rem;
   font-size: 0.92rem;
   font-weight: 500;
   color: var(--ink);
+  white-space: nowrap;
 }
 .exp-hero-plain__rating span {
   color: var(--douro-gold);
+}
+.review-links p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
 }
 .rate-grid {
   display: grid;

@@ -5,7 +5,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ContactSection } from '@/components/ContactSection'
 import type { SiteSetting } from '@/payload-types'
-import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
+import { isLocale, activeLocales, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: {
       canonical: `/${l}/privacy-policy`,
       languages: {
-        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/privacy-policy`])),
+        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/privacy-policy`])),
         'x-default': '/en/privacy-policy',
       },
     },
@@ -98,6 +98,8 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
         locale={locale}
         dict={dict}
         tagline={settings?.footerTagline}
+        cofinancingLabel={settings?.cofinancing?.label}
+        cofinancingLogos={settings?.cofinancing?.logos}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

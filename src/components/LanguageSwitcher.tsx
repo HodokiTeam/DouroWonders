@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { locales, localeNames, isLocale, type Locale } from '@/i18n/config'
+import { activeLocales, localeNames, isLocale, type Locale } from '@/i18n/config'
 
 export function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) {
   const [open, setOpen] = useState(false)
@@ -45,7 +45,7 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
       </button>
       {open && (
         <ul className="lang__menu" role="listbox">
-          {locales.map((l) => (
+          {activeLocales.map((l) => (
             <li key={l}>
               <button
                 type="button"

@@ -7,7 +7,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ContactSection } from '@/components/ContactSection'
 import type { Homepage, Media, SiteSetting } from '@/payload-types'
-import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
+import { isLocale, activeLocales, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: {
       canonical: `/${l}/about`,
       languages: {
-        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/about`])),
+        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/about`])),
         'x-default': '/en/about',
       },
     },
@@ -162,6 +162,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         locale={locale}
         dict={dict}
         tagline={settings?.footerTagline}
+        cofinancingLabel={settings?.cofinancing?.label}
+        cofinancingLogos={settings?.cofinancing?.logos}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

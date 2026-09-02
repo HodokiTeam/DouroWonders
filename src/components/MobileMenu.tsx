@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { locales, localeNames, isLocale, type Locale } from '@/i18n/config'
+import { activeLocales, isLocale, type Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { usePathname, useRouter } from 'next/navigation'
 import { smoothScrollTo } from '@/lib/smoothScroll'
@@ -66,6 +66,18 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
         <div className="mobilemenu" role="dialog" aria-modal="true" aria-label={dict.common.menu}>
           <div className="mobilemenu__bar">
             <span className="mobilemenu__title">{dict.common.menu}</span>
+            <div className="mobilemenu__langs-inline" aria-label={dict.common.language}>
+              {activeLocales.map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  className={l === locale ? 'is-active' : ''}
+                  onClick={() => switchLocale(l)}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
             <button type="button" className="mobilemenu__close" aria-label={dict.common.close} onClick={() => setOpen(false)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round">
                 <path d="M6 6l12 12M18 6L6 18" />
@@ -98,22 +110,6 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
               ),
             )}
           </nav>
-
-          <div className="mobilemenu__langs">
-            <span>{dict.common.language}</span>
-            <div>
-              {locales.map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  className={l === locale ? 'is-active' : ''}
-                  onClick={() => switchLocale(l)}
-                >
-                  {localeNames[l]}
-                </button>
-              ))}
-            </div>
-          </div>
 
           <a
             href={`${base}#experiences`}

@@ -969,6 +969,10 @@ export interface SiteSetting {
   };
   email: string;
   /**
+   * Deep link that opens the "write a review" box on the Google Business profile.
+   */
+  googleReviewUrl?: string | null;
+  /**
    * Short line shown under the logo in the footer.
    */
   footerTagline?: string | null;
@@ -1026,6 +1030,32 @@ export interface SiteSetting {
    * Shown on the cancellation policy page and FAQ area.
    */
   cancellationPolicy?: string | null;
+  /**
+   * Funding-program logos shown in the footer, e.g. Turismo de Portugal, Portugal 2030, União Europeia.
+   */
+  cofinancing?: {
+    /**
+     * e.g. "Co-financed by:"
+     */
+    label?: string | null;
+    logos?:
+      | {
+          /**
+           * e.g. "Portugal 2030" — used as the image alt text.
+           */
+          name: string;
+          /**
+           * Use the official reversed/white version for this dark background, if the program provides one.
+           */
+          logo: number | Media;
+          /**
+           * Link to the program's website.
+           */
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   legal?: {
     companyName?: string | null;
     /**
@@ -1229,6 +1259,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         description?: T;
       };
   email?: T;
+  googleReviewUrl?: T;
   footerTagline?: T;
   formEndpoint?: T;
   whatsapp?: T;
@@ -1266,6 +1297,19 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         bookingChannelUUID?: T;
       };
   cancellationPolicy?: T;
+  cofinancing?:
+    | T
+    | {
+        label?: T;
+        logos?:
+          | T
+          | {
+              name?: T;
+              logo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
   legal?:
     | T
     | {

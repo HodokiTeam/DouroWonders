@@ -9,7 +9,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ContactSection } from '@/components/ContactSection'
 import type { Experience, Homepage, Media, Post, SiteSetting } from '@/payload-types'
-import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
+import { isLocale, activeLocales, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: {
       canonical: `/${locale}/blog/${post.slug}`,
       languages: {
-        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/blog/${post.slug}`])),
+        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/blog/${post.slug}`])),
         'x-default': `/en/blog/${post.slug}`,
       },
     },
@@ -88,7 +88,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       <article>
         <section className="section post-hero">
-          <div className="container" style={{ maxWidth: '48rem' }}>
+          <div className="container" style={{ maxWidth: '44rem' }}>
             <p className="post-hero__back">
               <Link href={`${base}/blog`} className="link-gold">
                 ← {dict.blog.backToBlog}
@@ -126,7 +126,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <h2>{dict.blog.relatedCta}</h2>
                 <p>{related.shared?.shortCopy}</p>
                 <Link href={`${base}/${related.slug}`} className="btn btn--primary">
-                  {related.shared?.ctaLabel || dict.common.bookNow}
+                  {dict.blog.relatedCtaButton}
                 </Link>
               </aside>
             )}
@@ -171,6 +171,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         locale={locale}
         dict={dict}
         tagline={settings?.footerTagline}
+        cofinancingLabel={settings?.cofinancing?.label}
+        cofinancingLogos={settings?.cofinancing?.logos}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}

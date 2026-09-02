@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { locales, defaultLocale, type Locale } from '@/i18n/config'
+import { locales, activeLocales, defaultLocale, type Locale } from '@/i18n/config'
 
-/** Picks the best locale from the browser's Accept-Language header. */
+/** Picks the best active locale from the browser's Accept-Language header. */
 function detectLocale(header: string | null): Locale {
   if (!header) return defaultLocale
   const ranked = header
@@ -14,7 +14,7 @@ function detectLocale(header: string | null): Locale {
 
   for (const { tag } of ranked) {
     const base = tag.split('-')[0]
-    const match = locales.find((l) => l === base)
+    const match = activeLocales.find((l) => l === base)
     if (match) return match
   }
   return defaultLocale
@@ -23,6 +23,9 @@ function detectLocale(header: string | null): Locale {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  // Recognise any of the 5 codes here (not just active ones) so a stray link
+  // to an inactive locale, e.g. /fr/..., isn't double-prefixed into
+  // /en/fr/... — it's still routed through and correctly 404s downstream.
   const hasLocale = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (hasLocale) return NextResponse.next()
 

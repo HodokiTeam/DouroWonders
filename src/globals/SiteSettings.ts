@@ -17,6 +17,11 @@ export const SiteSettings: GlobalConfig = {
     },
     { name: 'email', type: 'text', required: true },
     {
+      name: 'googleReviewUrl',
+      type: 'text',
+      admin: { description: 'Deep link that opens the "write a review" box on the Google Business profile.' },
+    },
+    {
       name: 'footerTagline',
       type: 'textarea',
       localized: true,
@@ -81,6 +86,25 @@ export const SiteSettings: GlobalConfig = {
       type: 'textarea',
       localized: true,
       admin: { description: 'Shown on the cancellation policy page and FAQ area.' },
+    },
+    {
+      name: 'cofinancing',
+      type: 'group',
+      label: 'Co-financing (footer)',
+      admin: { description: 'Funding-program logos shown in the footer, e.g. Turismo de Portugal, Portugal 2030, União Europeia.' },
+      fields: [
+        { name: 'label', type: 'text', localized: true, admin: { description: 'e.g. "Co-financed by:"' } },
+        {
+          name: 'logos',
+          type: 'array',
+          labels: { singular: 'Logo', plural: 'Logos' },
+          fields: [
+            { name: 'name', type: 'text', required: true, admin: { description: 'e.g. "Portugal 2030" — used as the image alt text.' } },
+            { name: 'logo', type: 'upload', relationTo: 'media', required: true, admin: { description: 'Use the official reversed/white version for this dark background, if the program provides one.' } },
+            { name: 'url', type: 'text', admin: { description: 'Link to the program\'s website.' } },
+          ],
+        },
+      ],
     },
     {
       name: 'legal',

@@ -23,6 +23,8 @@ type FooterProps = {
   whatsapp?: string | null
   rnaat?: string | null
   tagline?: string | null
+  cofinancingLabel?: string | null
+  cofinancingLogos?: Array<{ name: string; url?: string | null; logo: { url?: string | null } | number | null }> | null
 }
 
 export function Footer({
@@ -37,6 +39,8 @@ export function Footer({
   whatsapp,
   rnaat,
   tagline,
+  cofinancingLabel,
+  cofinancingLogos,
 }: FooterProps) {
   const base = `/${locale}`
   return (
@@ -148,6 +152,30 @@ export function Footer({
             </ul>
           </div>
         </div>
+
+        {!!cofinancingLogos?.length && (
+          <div className="site-footer__cofinancing">
+            {cofinancingLabel && <p>{cofinancingLabel}</p>}
+            <div className="site-footer__cofinancing-logos">
+              {cofinancingLogos.map((item, i) => {
+                const src = item.logo && typeof item.logo === 'object' ? item.logo.url : undefined
+                if (!src) return null
+                const img = <img src={src} alt={item.name} loading="lazy" />
+                return (
+                  <span key={i}>
+                    {item.url ? (
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        {img}
+                      </a>
+                    ) : (
+                      img
+                    )}
+                  </span>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="site-footer__bottom">
           <span>

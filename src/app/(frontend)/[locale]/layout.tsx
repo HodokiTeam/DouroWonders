@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import '../styles.css'
 import { CookieConsent } from '@/components/CookieConsent'
-import { locales, localeTags, isLocale, type Locale } from '@/i18n/config'
+import { activeLocales, localeTags, isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 const poppins = Poppins({
@@ -19,7 +19,7 @@ const poppins = Poppins({
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }))
+  return activeLocales.map((locale) => ({ locale }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: {
       canonical: `/${locale}`,
       languages: {
-        ...Object.fromEntries(locales.map((l) => [localeTags[l], `/${l}`])),
+        ...Object.fromEntries(activeLocales.map((l) => [localeTags[l], `/${l}`])),
         'x-default': '/en',
       },
     },

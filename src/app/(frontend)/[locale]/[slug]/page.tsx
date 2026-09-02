@@ -12,7 +12,7 @@ import { RouteMap } from '@/components/RouteMap'
 import { StickyBookingCta } from '@/components/StickyBookingCta'
 import { strokeIcons } from '@/components/IncludedIcons'
 import type { Experience, Homepage, Media, SiteSetting } from '@/payload-types'
-import { isLocale, locales, localeTags, type Locale } from '@/i18n/config'
+import { isLocale, activeLocales, localeTags, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: {
       canonical: `/${locale}/${path}`,
       languages: {
-        ...Object.fromEntries(locales.map((x) => [localeTags[x], `/${x}/${path}`])),
+        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/${path}`])),
         'x-default': `/en/${path}`,
       },
     },
@@ -105,19 +105,14 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
       <section className="exp-hero-plain">
         <div className="container">
           <h1 className="exp-hero-plain__title">{exp.title}</h1>
-          <p className="exp-hero-plain__sub">{exp.subtitle}</p>
-          {reviewCount > 0 && (
-            <p className="exp-hero-plain__rating">
-              <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
-            </p>
-          )}
-          {exp.reviewUrl && (
-            <p style={{ marginTop: '0.4rem' }}>
-              <a href={exp.reviewUrl} className="link-gold" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.88rem' }}>
-                {dict.detail.leaveReview}
-              </a>
-            </p>
-          )}
+          <div className="exp-hero-plain__meta">
+            <span className="exp-hero-plain__sub">{exp.subtitle}</span>
+            {reviewCount > 0 && (
+              <span className="exp-hero-plain__rating">
+                <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
+              </span>
+            )}
+          </div>
         </div>
       </section>
 
@@ -393,6 +388,26 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               </div>
             </div>
           </div>
+
+          {/* Review links — placed here rather than the hero, so they don't sit as
+              near-empty lines above the fold */}
+          {(exp.reviewUrl || settings?.googleReviewUrl) && (
+            <div className="detail-section review-links">
+              <h2>{dict.detail.enjoyedTrip}</h2>
+              <p>
+                {settings?.googleReviewUrl && (
+                  <a href={settings.googleReviewUrl} className="link-gold" target="_blank" rel="noopener noreferrer">
+                    {dict.detail.leaveReviewGoogle}
+                  </a>
+                )}
+                {exp.reviewUrl && (
+                  <a href={exp.reviewUrl} className="link-gold" target="_blank" rel="noopener noreferrer">
+                    {dict.detail.leaveReview}
+                  </a>
+                )}
+              </p>
+            </div>
+          )}
           </div>
         </div>
       </section>
@@ -410,6 +425,8 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
         locale={locale}
         dict={dict}
         tagline={settings?.footerTagline}
+        cofinancingLabel={settings?.cofinancing?.label}
+        cofinancingLogos={settings?.cofinancing?.logos}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}
@@ -420,7 +437,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
         rnaat={settings?.legal?.rnaat}
       />
 
-      <StickyBookingCta label={home?.hero?.mobileStickyCta || 'Check Availability'} />
+      <StickyBookingCta label={home?.hero?.mobileStickyCta || 'Book Now'} />
 
       {/* Structured data: product + breadcrumbs */}
       <script

@@ -160,7 +160,7 @@ async function run() {
             'Small-group and private Douro River cruises from Porto and Vila Nova de Gaia, hosted by locals who know the river personally.',
           primaryCta: 'Book Now',
           secondaryCta: 'Explore Authentic Experiences',
-          mobileStickyCta: 'Check Availability',
+          mobileStickyCta: 'Book Now',
           image: heroId,
         },
         campaign: {

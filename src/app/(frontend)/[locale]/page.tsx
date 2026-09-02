@@ -578,6 +578,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         locale={locale}
         dict={dict}
         tagline={settings?.footerTagline}
+        cofinancingLabel={settings?.cofinancing?.label}
+        cofinancingLogos={settings?.cofinancing?.logos}
         email={settings?.email}
         whatsapp={settings?.whatsapp}
         meetingPointName={settings?.meetingPoint?.name}
@@ -591,7 +593,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Mobile sticky CTA */}
       <div className="sticky-cta">
         <a href={`${base}#experiences`} className="btn btn--primary">
-          {home?.hero?.mobileStickyCta || 'Check Availability'}
+          {home?.hero?.mobileStickyCta || 'Book Now'}
         </a>
       </div>
 

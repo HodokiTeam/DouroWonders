@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { locales, localeTags } from '@/i18n/config'
+import { activeLocales, localeTags } from '@/i18n/config'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
 
@@ -10,8 +10,8 @@ function localizedEntries(
   path: string,
   opts: { priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; lastModified?: Date },
 ): MetadataRoute.Sitemap {
-  const languages = Object.fromEntries(locales.map((l) => [localeTags[l], `${SITE_URL}/${l}${path}`]))
-  return locales.map((l) => ({
+  const languages = Object.fromEntries(activeLocales.map((l) => [localeTags[l], `${SITE_URL}/${l}${path}`]))
+  return activeLocales.map((l) => ({
     url: `${SITE_URL}/${l}${path}`,
     lastModified: opts.lastModified ?? new Date(),
     changeFrequency: opts.changeFrequency,

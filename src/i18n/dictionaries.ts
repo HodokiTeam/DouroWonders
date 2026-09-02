@@ -84,6 +84,8 @@ export type Dictionary = {
     viewFullRoute: string
     reviews: string
     leaveReview: string
+    leaveReviewGoogle: string
+    enjoyedTrip: string
     viewAllPhotos: string
   }
   homeSpecialOccasions: {
@@ -179,6 +181,7 @@ export type Dictionary = {
     readingTime: string
     backToBlog: string
     relatedCta: string
+    relatedCtaButton: string
     publishedOn: string
   }
   routeMap: { day: string; sunset: string }
@@ -263,6 +266,8 @@ const en: Dictionary = {
     viewFullRoute: 'View full route & landmarks',
     reviews: 'reviews',
     leaveReview: 'Leave a review on Tripadvisor',
+    leaveReviewGoogle: 'Leave a review on Google',
+    enjoyedTrip: 'Enjoyed your trip?',
     viewAllPhotos: 'View all',
   },
   homeSpecialOccasions: {
@@ -360,6 +365,7 @@ const en: Dictionary = {
     readingTime: 'min read',
     backToBlog: 'Back to all articles',
     relatedCta: 'Ready to see it from the river?',
+    relatedCtaButton: 'See this experience',
     publishedOn: 'Published',
   },
   routeMap: { day: 'Day Cruise', sunset: 'Sunset Cruise' ,
@@ -451,6 +457,8 @@ const pt: Dictionary = {
     viewFullRoute: 'Ver percurso completo e pontos de interesse',
     reviews: 'avaliações',
     leaveReview: 'Deixe uma avaliação no Tripadvisor',
+    leaveReviewGoogle: 'Deixe uma avaliação no Google',
+    enjoyedTrip: 'Gostou do passeio?',
     viewAllPhotos: 'Ver todas',
   },
   homeSpecialOccasions: {
@@ -548,6 +556,7 @@ const pt: Dictionary = {
     readingTime: 'min de leitura',
     backToBlog: 'Ver todos os artigos',
     relatedCta: 'Pronto para ver do rio?',
+    relatedCtaButton: 'Ver esta experiência',
     publishedOn: 'Publicado a',
   },
   routeMap: { day: 'Passeio Diurno', sunset: 'Passeio ao Pôr do Sol' ,
@@ -639,6 +648,8 @@ const fr: Dictionary = {
     viewFullRoute: "Voir l'itinéraire complet et les sites remarquables",
     reviews: 'avis',
     leaveReview: 'Laisser un avis sur Tripadvisor',
+    leaveReviewGoogle: 'Laisser un avis sur Google',
+    enjoyedTrip: 'Vous avez aimé votre sortie ?',
     viewAllPhotos: 'Tout voir',
   },
   homeSpecialOccasions: {
@@ -737,6 +748,7 @@ const fr: Dictionary = {
     readingTime: 'min de lecture',
     backToBlog: 'Voir tous les articles',
     relatedCta: 'Prêt à le voir depuis le fleuve ?',
+    relatedCtaButton: 'Voir cette expérience',
     publishedOn: 'Publié le',
   },
   routeMap: { day: 'Croisière de jour', sunset: 'Croisière coucher de soleil' ,
@@ -828,6 +840,8 @@ const es: Dictionary = {
     viewFullRoute: 'Ver la ruta completa y los puntos de interés',
     reviews: 'reseñas',
     leaveReview: 'Deja una reseña en Tripadvisor',
+    leaveReviewGoogle: 'Deja una reseña en Google',
+    enjoyedTrip: '¿Disfrutaste del paseo?',
     viewAllPhotos: 'Ver todas',
   },
   homeSpecialOccasions: {
@@ -925,6 +939,7 @@ const es: Dictionary = {
     readingTime: 'min de lectura',
     backToBlog: 'Ver todos los artículos',
     relatedCta: '¿Listo para verlo desde el río?',
+    relatedCtaButton: 'Ver esta experiencia',
     publishedOn: 'Publicado el',
   },
   routeMap: { day: 'Crucero de día', sunset: 'Crucero al atardecer' ,
@@ -1016,6 +1031,8 @@ const de: Dictionary = {
     viewFullRoute: 'Vollständige Route & Sehenswürdigkeiten ansehen',
     reviews: 'Bewertungen',
     leaveReview: 'Bewertung auf Tripadvisor hinterlassen',
+    leaveReviewGoogle: 'Bewertung auf Google hinterlassen',
+    enjoyedTrip: 'Hat Ihnen die Fahrt gefallen?',
     viewAllPhotos: 'Alle ansehen',
   },
   homeSpecialOccasions: {
@@ -1114,6 +1131,7 @@ const de: Dictionary = {
     readingTime: 'Min. Lesezeit',
     backToBlog: 'Alle Artikel ansehen',
     relatedCta: 'Bereit, es vom Fluss aus zu sehen?',
+    relatedCtaButton: 'Dieses Erlebnis ansehen',
     publishedOn: 'Veröffentlicht am',
   },
   routeMap: { day: 'Tagesfahrt', sunset: 'Sonnenuntergangsfahrt' ,
