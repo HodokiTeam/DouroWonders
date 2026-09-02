@@ -113,6 +113,12 @@ export const SiteSettings: GlobalConfig = {
         { name: 'companyName', type: 'text' },
         { name: 'rnaat', type: 'text', admin: { description: 'RNAAT registration number, e.g. "RNAAT 88/2002"' } },
         { name: 'livroReclamacoesUrl', type: 'text', admin: { description: 'Livro de Reclamações link (or leave empty for placeholder).' } },
+        {
+          name: 'termsContent',
+          type: 'richText',
+          localized: true,
+          admin: { description: 'Shown on the Terms & Conditions page.' },
+        },
       ],
     },
   ],

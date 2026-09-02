@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -38,6 +39,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const res = await payload.find({ collection: 'experiences', where: { slug: { equals: baseSlug } }, limit: 1, locale })
   const exp = res.docs[0] as Experience | undefined
   if (!exp) return {}
+
+  // Slugs are localized — the hreflang alternates need each locale's own slug, not this one's.
+  const allSlugsRes = await payload.findByID({ collection: 'experiences', id: exp.id, locale: 'all', depth: 0 })
+  const slugsByLocale = allSlugsRes.slug as unknown as Record<Locale, string>
+  const suffix = variant === 'private' ? PRIVATE_SUFFIX : ''
+
   const image = mediaUrl(exp.image, '/images/boat-porto-bridge.png')
   const title = variant === 'private' ? `${exp.subtitle || exp.title} — Private` : exp.subtitle || exp.title
   const description = (variant === 'private' ? exp.private?.shortCopy : exp.shared?.shortCopy) || undefined
@@ -48,8 +55,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: {
       canonical: `/${locale}/${path}`,
       languages: {
-        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/${path}`])),
-        'x-default': `/en/${path}`,
+        ...Object.fromEntries(
+          activeLocales.filter((x) => slugsByLocale[x]).map((x) => [localeTags[x], `/${x}/${slugsByLocale[x]}${suffix}`]),
+        ),
+        'x-default': `/en/${(slugsByLocale.en || exp.slug)}${suffix}`,
       },
     },
     openGraph: {
@@ -75,14 +84,25 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
   const base = `/${locale}`
   const payload = await getPayload({ config })
 
-  const [expRes, home, settings] = await Promise.all([
+  const [expRes, allExpRes, home, settings] = await Promise.all([
     payload.find({ collection: 'experiences', where: { slug: { equals: baseSlug } }, limit: 1, locale }),
+    payload.find({ collection: 'experiences', sort: 'order', limit: 10, depth: 0, locale }),
     payload.findGlobal({ slug: 'homepage', locale }) as Promise<Homepage>,
     payload.findGlobal({ slug: 'site-settings', locale }) as Promise<SiteSetting>,
   ])
 
   const exp = expRes.docs[0] as Experience | undefined
   if (!exp) notFound()
+
+  const otherExperiences = (allExpRes.docs as Experience[]).filter((e) => e.id !== exp.id)
+
+  // Slugs are localized — the language switcher needs each locale's own slug for this page.
+  const allSlugsRes = await payload.findByID({ collection: 'experiences', id: exp.id, locale: 'all', depth: 0 })
+  const slugsByLocale = allSlugsRes.slug as unknown as Record<Locale, string>
+  const suffix = variant === 'private' ? PRIVATE_SUFFIX : ''
+  const localizedPaths = Object.fromEntries(
+    activeLocales.filter((l) => slugsByLocale[l]).map((l) => [l, `/${l}/${slugsByLocale[l]}${suffix}`]),
+  ) as Partial<Record<Locale, string>>
 
   const campaignActive = home?.campaign?.active !== false
   const bookingChannelUUID = settings?.bokun?.bookingChannelUUID
@@ -98,12 +118,34 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
 
   return (
     <>
-      <Header locale={locale} dict={dict} announcement={campaignActive ? home?.campaign?.badgeText : null} />
+      <Header
+        locale={locale}
+        dict={dict}
+        announcement={campaignActive ? home?.campaign?.badgeText : null}
+        localizedPaths={localizedPaths}
+      />
 
       {/* Compact hero — title and subtitle only; the photo now lives in the gallery below,
           and the Opening Offer already shows in the top banner */}
       <section className="exp-hero-plain">
         <div className="container">
+          <nav className="breadcrumb" aria-label="Breadcrumb">
+            <Link href={base}>{dict.detail.breadcrumbHome}</Link>
+            <span className="breadcrumb__sep" aria-hidden="true">/</span>
+            <a href={`${base}#experiences`}>{dict.nav.experiences}</a>
+            <span className="breadcrumb__sep" aria-hidden="true">/</span>
+            <span className="breadcrumb__current" aria-current="page">{exp.title}</span>
+            {otherExperiences.length > 0 && (
+              <span className="breadcrumb__also">
+                {dict.detail.seeAlso}:{' '}
+                {otherExperiences.map((other) => (
+                  <Link key={other.id} href={`${base}/${other.slug}`}>
+                    {other.title}
+                  </Link>
+                ))}
+              </span>
+            )}
+          </nav>
           <h1 className="exp-hero-plain__title">{exp.title}</h1>
           <div className="exp-hero-plain__meta">
             <span className="exp-hero-plain__sub">{exp.subtitle}</span>

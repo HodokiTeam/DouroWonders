@@ -1,5 +1,6 @@
 import React from 'react'
 import { getPayload } from 'payload'
+import { RichText } from '@payloadcms/richtext-lexical/react'
 import config from '@/payload.config'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -41,13 +42,21 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
         <div className="container" style={{ maxWidth: '46rem' }}>
           <p className="eyebrow">Legal</p>
           <h1 className="section-title">Terms &amp; conditions</h1>
-          <p>
-            Experiences are operated by Douro Wonders, Lda. Bookings are subject to the cancellation
-            policy. The route may vary depending on river, weather and safety conditions.
-          </p>
-          <p style={{ marginTop: '1rem', fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>
-            Full legal text to be completed before launch.
-          </p>
+          {settings?.legal?.termsContent ? (
+            <div className="prose">
+              <RichText data={settings.legal.termsContent} />
+            </div>
+          ) : (
+            <>
+              <p>
+                Experiences are operated by Douro Wonders, Lda. Bookings are subject to the cancellation
+                policy. The route may vary depending on river, weather and safety conditions.
+              </p>
+              <p style={{ marginTop: '1rem', fontSize: 'var(--fs-caption)', color: 'var(--muted-grey)' }}>
+                Full legal text to be completed before launch.
+              </p>
+            </>
+          )}
         </div>
       </section>
       <ContactSection

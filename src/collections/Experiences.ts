@@ -19,7 +19,8 @@ export const Experiences: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
-      admin: { description: 'URL path, e.g. "day-cruise". Stays the same in every language.' },
+      localized: true,
+      admin: { description: 'URL path, e.g. "day-cruise". Translate per language for SEO — set a value for every active locale.' },
     },
     {
       name: 'subtitle',

@@ -16,6 +16,8 @@ export type Dictionary = {
     specialOccasions: string
     dayCruise: string
     sunsetCruise: string
+    dayCruiseSlug: string
+    sunsetCruiseSlug: string
     bookNow: string
   }
   hero: {
@@ -87,6 +89,8 @@ export type Dictionary = {
     leaveReviewGoogle: string
     enjoyedTrip: string
     viewAllPhotos: string
+    breadcrumbHome: string
+    seeAlso: string
   }
   homeSpecialOccasions: {
     eyebrow: string
@@ -201,6 +205,8 @@ const en: Dictionary = {
     specialOccasions: 'Special Occasions',
     dayCruise: 'Day Cruise',
     sunsetCruise: 'Sunset Cruise',
+    dayCruiseSlug: 'porto-douro-day-cruise',
+    sunsetCruiseSlug: 'porto-douro-sunset-cruise',
     bookNow: 'Book Now',
   },
   hero: { sharedCruise: 'Shared cruise', privateCruise: 'Private cruise', perPerson: 'per person', perBoat: 'per boat', from: 'from', eyebrow: 'The Douro — No.01' },
@@ -269,6 +275,8 @@ const en: Dictionary = {
     leaveReviewGoogle: 'Leave a review on Google',
     enjoyedTrip: 'Enjoyed your trip?',
     viewAllPhotos: 'View all',
+    breadcrumbHome: 'Home',
+    seeAlso: 'Also see',
   },
   homeSpecialOccasions: {
     eyebrow: 'Private Experiences',
@@ -391,6 +399,8 @@ const pt: Dictionary = {
     specialOccasions: 'Ocasiões Especiais',
     dayCruise: 'Cruzeiro Diurno',
     sunsetCruise: 'Cruzeiro Pôr do Sol',
+    dayCruiseSlug: 'passeio-de-barco-diurno-porto',
+    sunsetCruiseSlug: 'passeio-de-barco-por-do-sol-porto',
     bookNow: 'Reservar',
   },
   hero: { sharedCruise: 'Passeio partilhado', privateCruise: 'Passeio privado', perPerson: 'por pessoa', perBoat: 'por embarcação', from: 'desde', eyebrow: 'O Douro — No.01' },
@@ -460,6 +470,8 @@ const pt: Dictionary = {
     leaveReviewGoogle: 'Deixe uma avaliação no Google',
     enjoyedTrip: 'Gostou do passeio?',
     viewAllPhotos: 'Ver todas',
+    breadcrumbHome: 'Início',
+    seeAlso: 'Ver também',
   },
   homeSpecialOccasions: {
     eyebrow: 'Experiências Privadas',
@@ -582,6 +594,8 @@ const fr: Dictionary = {
     specialOccasions: 'Occasions Spéciales',
     dayCruise: 'Croisière de jour',
     sunsetCruise: 'Croisière au coucher du soleil',
+    dayCruiseSlug: 'day-cruise',
+    sunsetCruiseSlug: 'sunset-cruise',
     bookNow: 'Réserver',
   },
   hero: { sharedCruise: 'Croisière partagée', privateCruise: 'Croisière privée', perPerson: 'par personne', perBoat: 'par bateau', from: 'à partir de', eyebrow: 'Le Douro — No.01' },
@@ -651,6 +665,8 @@ const fr: Dictionary = {
     leaveReviewGoogle: 'Laisser un avis sur Google',
     enjoyedTrip: 'Vous avez aimé votre sortie ?',
     viewAllPhotos: 'Tout voir',
+    breadcrumbHome: 'Accueil',
+    seeAlso: 'Voir aussi',
   },
   homeSpecialOccasions: {
     eyebrow: 'Expériences Privées',
@@ -774,6 +790,8 @@ const es: Dictionary = {
     specialOccasions: 'Ocasiones Especiales',
     dayCruise: 'Crucero Diurno',
     sunsetCruise: 'Crucero Atardecer',
+    dayCruiseSlug: 'day-cruise',
+    sunsetCruiseSlug: 'sunset-cruise',
     bookNow: 'Reservar',
   },
   hero: { sharedCruise: 'Crucero compartido', privateCruise: 'Crucero privado', perPerson: 'por persona', perBoat: 'por barco', from: 'desde', eyebrow: 'El Duero — No.01' },
@@ -843,6 +861,8 @@ const es: Dictionary = {
     leaveReviewGoogle: 'Deja una reseña en Google',
     enjoyedTrip: '¿Disfrutaste del paseo?',
     viewAllPhotos: 'Ver todas',
+    breadcrumbHome: 'Inicio',
+    seeAlso: 'Ver también',
   },
   homeSpecialOccasions: {
     eyebrow: 'Experiencias Privadas',
@@ -965,6 +985,8 @@ const de: Dictionary = {
     specialOccasions: 'Besondere Anlässe',
     dayCruise: 'Day Cruise',
     sunsetCruise: 'Sunset Cruise',
+    dayCruiseSlug: 'day-cruise',
+    sunsetCruiseSlug: 'sunset-cruise',
     bookNow: 'Buchen',
   },
   hero: { sharedCruise: 'Gemeinsame Fahrt', privateCruise: 'Private Fahrt', perPerson: 'pro Person', perBoat: 'pro Boot', from: 'ab', eyebrow: 'Der Douro — Nr.01' },
@@ -1034,6 +1056,8 @@ const de: Dictionary = {
     leaveReviewGoogle: 'Bewertung auf Google hinterlassen',
     enjoyedTrip: 'Hat Ihnen die Fahrt gefallen?',
     viewAllPhotos: 'Alle ansehen',
+    breadcrumbHome: 'Startseite',
+    seeAlso: 'Siehe auch',
   },
   homeSpecialOccasions: {
     eyebrow: 'Private Erlebnisse',

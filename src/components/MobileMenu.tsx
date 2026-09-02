@@ -7,7 +7,15 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import { usePathname, useRouter } from 'next/navigation'
 import { smoothScrollTo } from '@/lib/smoothScroll'
 
-export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function MobileMenu({
+  locale,
+  dict,
+  localizedPaths,
+}: {
+  locale: Locale
+  dict: Dictionary
+  localizedPaths?: Partial<Record<Locale, string>>
+}) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -29,17 +37,21 @@ export function MobileMenu({ locale, dict }: { locale: Locale; dict: Dictionary 
   }, [open])
 
   const switchLocale = (next: Locale) => {
+    setOpen(false)
+    if (localizedPaths?.[next]) {
+      router.push(localizedPaths[next] as string)
+      return
+    }
     const segments = (pathname || '/').split('/')
     if (segments[1] && isLocale(segments[1])) segments[1] = next
     else segments.splice(1, 0, next)
-    setOpen(false)
     router.push(segments.join('/') || `/${next}`)
   }
 
   const links: Array<{ href: string; label: string; internal?: boolean; sub?: boolean }> = [
     { href: `${base}#experiences`, label: dict.nav.experiences },
-    { href: `${base}/day-cruise`, label: dict.nav.dayCruise, internal: true, sub: true },
-    { href: `${base}/sunset-cruise`, label: dict.nav.sunsetCruise, internal: true, sub: true },
+    { href: `${base}/${dict.nav.dayCruiseSlug}`, label: dict.nav.dayCruise, internal: true, sub: true },
+    { href: `${base}/${dict.nav.sunsetCruiseSlug}`, label: dict.nav.sunsetCruise, internal: true, sub: true },
     { href: `${base}/special-occasions`, label: dict.nav.specialOccasions, internal: true },
     { href: `${base}#route`, label: dict.nav.route },
     { href: `${base}#boat`, label: dict.nav.boat },

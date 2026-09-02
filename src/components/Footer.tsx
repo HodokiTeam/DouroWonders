@@ -126,10 +126,10 @@ export function Footer({
             <h4>{dict.footer.bookings}</h4>
             <ul>
               <li>
-                <Link href={`${base}/day-cruise`}>Day Cruise</Link>
+                <Link href={`${base}/${dict.nav.dayCruiseSlug}`}>{dict.nav.dayCruise}</Link>
               </li>
               <li>
-                <Link href={`${base}/sunset-cruise`}>Sunset Cruise</Link>
+                <Link href={`${base}/${dict.nav.sunsetCruiseSlug}`}>{dict.nav.sunsetCruise}</Link>
               </li>
               <li>
                 <Link href={`${base}/blog`}>{dict.nav.blog}</Link>

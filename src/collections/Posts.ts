@@ -25,7 +25,8 @@ export const Posts: CollectionConfig = {
               type: 'text',
               required: true,
               unique: true,
-              admin: { description: 'URL path, e.g. "best-time-douro-river-cruise". Same across all languages.' },
+              localized: true,
+              admin: { description: 'URL path, e.g. "best-time-douro-river-cruise". Translate per language for SEO — set a value for every active locale.' },
             },
             {
               name: 'excerpt',

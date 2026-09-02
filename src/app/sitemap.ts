@@ -20,6 +20,25 @@ function localizedEntries(
   }))
 }
 
+/** Same as localizedEntries, but each locale gets its own translated path (e.g. localized slugs). */
+function localizedContentEntries(
+  pathsByLocale: Partial<Record<(typeof activeLocales)[number], string>>,
+  opts: { priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; lastModified?: Date },
+): MetadataRoute.Sitemap {
+  const languages = Object.fromEntries(
+    activeLocales.filter((l) => pathsByLocale[l]).map((l) => [localeTags[l], `${SITE_URL}/${l}${pathsByLocale[l]}`]),
+  )
+  return activeLocales
+    .filter((l) => pathsByLocale[l])
+    .map((l) => ({
+      url: `${SITE_URL}/${l}${pathsByLocale[l]}`,
+      lastModified: opts.lastModified ?? new Date(),
+      changeFrequency: opts.changeFrequency,
+      priority: opts.priority,
+      alternates: { languages },
+    }))
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths: Array<[string, number, MetadataRoute.Sitemap[number]['changeFrequency']]> = [
     ['', 1, 'weekly'],
@@ -38,37 +57,67 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const payload = await getPayload({ config })
-    const [experiences, posts] = await Promise.all([
-      payload.find({ collection: 'experiences', limit: 50, depth: 0 }),
-      payload.find({
-        collection: 'posts',
-        where: { status: { equals: 'published' } },
-        limit: 500,
-        depth: 0,
-      }),
+
+    // Slugs are localized now, so each locale needs its own fetch to know its own path.
+    const [experiencesByLocale, postsByLocale] = await Promise.all([
+      Promise.all(activeLocales.map((l) => payload.find({ collection: 'experiences', limit: 50, depth: 0, locale: l }))),
+      Promise.all(
+        activeLocales.map((l) =>
+          payload.find({
+            collection: 'posts',
+            where: { status: { equals: 'published' } },
+            limit: 500,
+            depth: 0,
+            locale: l,
+          }),
+        ),
+      ),
     ])
 
-    for (const exp of experiences.docs) {
+    const experienceSlugsById = new Map<number, Partial<Record<(typeof activeLocales)[number], string>>>()
+    const experienceUpdatedById = new Map<number, string | undefined>()
+    experiencesByLocale.forEach((res, i) => {
+      const l = activeLocales[i]
+      for (const exp of res.docs) {
+        const entry = experienceSlugsById.get(exp.id) ?? {}
+        entry[l] = exp.slug
+        experienceSlugsById.set(exp.id, entry)
+        experienceUpdatedById.set(exp.id, exp.updatedAt)
+      }
+    })
+
+    const postSlugsById = new Map<number, Partial<Record<(typeof activeLocales)[number], string>>>()
+    const postUpdatedById = new Map<number, string | undefined>()
+    postsByLocale.forEach((res, i) => {
+      const l = activeLocales[i]
+      for (const post of res.docs) {
+        const entry = postSlugsById.get(post.id) ?? {}
+        entry[l] = post.slug
+        postSlugsById.set(post.id, entry)
+        postUpdatedById.set(post.id, post.updatedAt)
+      }
+    })
+
+    for (const [id, slugs] of experienceSlugsById) {
+      const lastModified = experienceUpdatedById.get(id) ? new Date(experienceUpdatedById.get(id) as string) : undefined
       entries.push(
-        ...localizedEntries(`/${exp.slug}`, {
-          priority: 0.9,
-          changeFrequency: 'weekly',
-          lastModified: exp.updatedAt ? new Date(exp.updatedAt) : undefined,
-        }),
-        ...localizedEntries(`/${exp.slug}-private`, {
-          priority: 0.8,
-          changeFrequency: 'weekly',
-          lastModified: exp.updatedAt ? new Date(exp.updatedAt) : undefined,
-        }),
+        ...localizedContentEntries(
+          Object.fromEntries(Object.entries(slugs).map(([l, s]) => [l, `/${s}`])),
+          { priority: 0.9, changeFrequency: 'weekly', lastModified },
+        ),
+        ...localizedContentEntries(
+          Object.fromEntries(Object.entries(slugs).map(([l, s]) => [l, `/${s}-private`])),
+          { priority: 0.8, changeFrequency: 'weekly', lastModified },
+        ),
       )
     }
-    for (const post of posts.docs) {
+    for (const [id, slugs] of postSlugsById) {
+      const lastModified = postUpdatedById.get(id) ? new Date(postUpdatedById.get(id) as string) : undefined
       entries.push(
-        ...localizedEntries(`/blog/${post.slug}`, {
-          priority: 0.7,
-          changeFrequency: 'monthly',
-          lastModified: post.updatedAt ? new Date(post.updatedAt) : undefined,
-        }),
+        ...localizedContentEntries(
+          Object.fromEntries(Object.entries(slugs).map(([l, s]) => [l, `/blog/${s}`])),
+          { priority: 0.7, changeFrequency: 'monthly', lastModified },
+        ),
       )
     }
   } catch {

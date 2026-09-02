@@ -148,7 +148,7 @@ export interface Experience {
   id: number;
   title: string;
   /**
-   * URL path, e.g. "day-cruise". Stays the same in every language.
+   * URL path, e.g. "day-cruise". Translate per language for SEO — set a value for every active locale.
    */
   slug: string;
   /**
@@ -352,7 +352,7 @@ export interface Post {
   id: number;
   title: string;
   /**
-   * URL path, e.g. "best-time-douro-river-cruise". Same across all languages.
+   * URL path, e.g. "best-time-douro-river-cruise". Translate per language for SEO — set a value for every active locale.
    */
   slug: string;
   /**
@@ -1066,6 +1066,24 @@ export interface SiteSetting {
      * Livro de Reclamações link (or leave empty for placeholder).
      */
     livroReclamacoesUrl?: string | null;
+    /**
+     * Shown on the Terms & Conditions page.
+     */
+    termsContent?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1316,6 +1334,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         companyName?: T;
         rnaat?: T;
         livroReclamacoesUrl?: T;
+        termsContent?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -4,7 +4,18 @@ import React, { useState, useRef, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { activeLocales, localeNames, isLocale, type Locale } from '@/i18n/config'
 
-export function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) {
+export function LanguageSwitcher({
+  locale,
+  label,
+  localizedPaths,
+}: {
+  locale: Locale
+  label: string
+  /** Full path (e.g. "/pt/passeio-de-barco-diurno-porto") for each locale, when the
+      current page has a locale-specific slug — the current-page equivalent of a
+      naive "swap the /xx segment" won't exist once slugs differ per language. */
+  localizedPaths?: Partial<Record<Locale, string>>
+}) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -19,11 +30,15 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
   }, [])
 
   const switchTo = (next: Locale) => {
+    setOpen(false)
+    if (localizedPaths?.[next]) {
+      router.push(localizedPaths[next] as string)
+      return
+    }
     // Swap the leading /xx segment, keep the rest of the path
     const segments = (pathname || '/').split('/')
     if (segments[1] && isLocale(segments[1])) segments[1] = next
     else segments.splice(1, 0, next)
-    setOpen(false)
     router.push(segments.join('/') || `/${next}`)
   }
 

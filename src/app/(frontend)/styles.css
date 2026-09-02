@@ -399,9 +399,12 @@ textarea:focus {
   border-bottom: 1px solid rgba(222, 211, 182, 0.45);
 }
 /* The wave under the opening-offer banner already draws the seam — a hard
-   line right after it would double up on the same job. */
+   line right after it would double up on the same job. The 1px overlap
+   below covers a hairline sub-pixel gap that otherwise shows between the
+   wave's bottom edge and the header's translucent background. */
 .announce + .site-header {
   border-bottom: 0;
+  margin-top: -1px;
 }
 .site-header .container {
   display: flex;
@@ -1848,7 +1851,7 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 5vw, 4rem);
-  align-items: center;
+  align-items: start;
 }
 @media (max-width: 860px) {
   .meeting {
@@ -2381,12 +2384,8 @@ textarea:focus {
   margin-bottom: 0.9rem;
 }
 .post-cover {
-  /* Deliberately wider than the 44rem text column below (same as the hero
-     title above it) for a bit of visual rhythm — but not the full 1600px
-     site container, which made the text look oddly narrow by comparison. */
-  max-width: 56rem;
+  /* Same edges as the navbar and the rest of the site — no extra max-width. */
   margin-top: 2rem;
-  margin-inline: auto;
 }
 .post-cover img {
   width: 100%;
@@ -2394,9 +2393,6 @@ textarea:focus {
   box-shadow: var(--card-shadow);
   aspect-ratio: 16 / 8;
   object-fit: cover;
-}
-.post-body {
-  max-width: 44rem;
 }
 .post-body p {
   margin-bottom: 1.15rem;
@@ -2433,10 +2429,8 @@ textarea:focus {
 
 .post-cta {
   margin-top: 3rem;
-  background: var(--warm-sand);
-  border: 1px solid var(--light-sand);
-  border-radius: var(--radius-card);
-  padding: clamp(1.5rem, 4vw, 2.2rem);
+  padding-top: 2.2rem;
+  border-top: 1px solid var(--light-sand);
 }
 .post-cta h2 {
   font-size: 1.4rem;
@@ -2515,6 +2509,47 @@ textarea:focus {
 /* ---------- Experience page ---------- */
 /* Compact plain-text hero for the experience detail pages — no photo, since
    the gallery right below already carries the visuals. */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 0.3rem;
+  font-size: var(--fs-caption);
+  color: var(--muted-grey);
+  margin-bottom: 0.9rem;
+}
+.breadcrumb a {
+  color: var(--muted-grey);
+}
+.breadcrumb a:hover {
+  color: var(--douro-gold);
+}
+.breadcrumb__current {
+  color: var(--ink);
+  font-weight: 500;
+}
+.breadcrumb__also {
+  margin-left: 0.6rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--light-sand);
+  display: inline-flex;
+  gap: 0.4rem;
+}
+.breadcrumb__also a {
+  color: var(--douro-gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .breadcrumb__also {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+    flex-basis: 100%;
+  }
+}
+
 .exp-hero-plain {
   padding: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(0.8rem, 2vw, 1.1rem);
 }
@@ -2718,7 +2753,8 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.1rem 1.6rem;
-  margin: 2rem 0;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
   padding-top: 1.8rem;
   border-top: 1px solid var(--light-sand);
 }

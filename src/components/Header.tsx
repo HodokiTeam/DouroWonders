@@ -15,10 +15,12 @@ export function Header({
   locale,
   dict,
   announcement,
+  localizedPaths,
 }: {
   locale: Locale
   dict: Dictionary
   announcement?: string | null
+  localizedPaths?: Partial<Record<Locale, string>>
 }) {
   const base = `/${locale}`
   const pathname = usePathname()
@@ -69,8 +71,8 @@ export function Header({
             <div className="nav-dropdown">
               <a href={`${base}#experiences`} onClick={smoothScrollTo}>{dict.nav.experiences}</a>
               <div className="nav-dropdown__panel">
-                <Link href={`${base}/day-cruise`}>{dict.nav.dayCruise}</Link>
-                <Link href={`${base}/sunset-cruise`}>{dict.nav.sunsetCruise}</Link>
+                <Link href={`${base}/${dict.nav.dayCruiseSlug}`}>{dict.nav.dayCruise}</Link>
+                <Link href={`${base}/${dict.nav.sunsetCruiseSlug}`}>{dict.nav.sunsetCruise}</Link>
               </div>
             </div>
             <Link href={`${base}/special-occasions`}>{dict.nav.specialOccasions}</Link>
@@ -79,13 +81,13 @@ export function Header({
             <a href={`${base}#faq`} onClick={smoothScrollTo}>{dict.nav.faq}</a>
             <Link href={`${base}/about`}>{dict.nav.about}</Link>
             <Link href={`${base}/blog`}>{dict.nav.blog}</Link>
-            <LanguageSwitcher locale={locale} label={dict.common.language} />
+            <LanguageSwitcher locale={locale} label={dict.common.language} localizedPaths={localizedPaths} />
             <a href={`${base}#experiences`} className="btn btn--primary" onClick={smoothScrollTo}>
               {dict.nav.bookNow}
             </a>
           </nav>
 
-          <MobileMenu locale={locale} dict={dict} />
+          <MobileMenu locale={locale} dict={dict} localizedPaths={localizedPaths} />
         </div>
       </header>
     </>

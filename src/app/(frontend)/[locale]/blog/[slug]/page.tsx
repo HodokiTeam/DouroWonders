@@ -29,6 +29,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = res.docs[0] as Post | undefined
   if (!post) return {}
 
+  // Slugs are localized — the hreflang alternates need each locale's own slug, not this one's.
+  const allSlugsRes = await payload.findByID({ collection: 'posts', id: post.id, locale: 'all', depth: 0 })
+  const slugsByLocale = allSlugsRes.slug as unknown as Record<Locale, string>
+
   const title = post.seoTitle || post.title
   const description = post.seoDescription || post.excerpt
   return {
@@ -38,8 +42,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: {
       canonical: `/${locale}/blog/${post.slug}`,
       languages: {
-        ...Object.fromEntries(activeLocales.map((x) => [localeTags[x], `/${x}/blog/${post.slug}`])),
-        'x-default': `/en/blog/${post.slug}`,
+        ...Object.fromEntries(
+          activeLocales.filter((x) => slugsByLocale[x]).map((x) => [localeTags[x], `/${x}/blog/${slugsByLocale[x]}`]),
+        ),
+        'x-default': `/en/blog/${slugsByLocale.en || post.slug}`,
       },
     },
     openGraph: {
@@ -68,6 +74,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = postRes.docs[0] as Post | undefined
   if (!post) notFound()
 
+  // Slugs are localized — the language switcher needs each locale's own slug for this page.
+  const allSlugsRes = await payload.findByID({ collection: 'posts', id: post.id, locale: 'all', depth: 0 })
+  const slugsByLocale = allSlugsRes.slug as unknown as Record<Locale, string>
+  const localizedPaths = Object.fromEntries(
+    activeLocales.filter((l) => slugsByLocale[l]).map((l) => [l, `/${l}/blog/${slugsByLocale[l]}`]),
+  ) as Partial<Record<Locale, string>>
+
   const campaignActive = home?.campaign?.active !== false
   const dateFmt = new Intl.DateTimeFormat(localeTags[locale], { dateStyle: 'long' })
   const related = (typeof post.relatedExperience === 'object' ? post.relatedExperience : null) as Experience | null
@@ -84,11 +97,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <Header locale={locale} dict={dict} announcement={campaignActive ? home?.campaign?.badgeText : null} />
+      <Header
+        locale={locale}
+        dict={dict}
+        announcement={campaignActive ? home?.campaign?.badgeText : null}
+        localizedPaths={localizedPaths}
+      />
 
       <article>
         <section className="section post-hero">
-          <div className="container" style={{ maxWidth: '44rem' }}>
+          <div className="container">
             <p className="post-hero__back">
               <Link href={`${base}/blog`} className="link-gold">
                 ← {dict.blog.backToBlog}
@@ -120,16 +138,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="container post-body">
             {post.content && <RichText data={post.content} />}
 
-            {related && (
-              <aside className="post-cta">
-                <p className="eyebrow">{dict.sections.experiences}</p>
-                <h2>{dict.blog.relatedCta}</h2>
-                <p>{related.shared?.shortCopy}</p>
-                <Link href={`${base}/${related.slug}`} className="btn btn--primary">
-                  {dict.blog.relatedCtaButton}
-                </Link>
-              </aside>
-            )}
+            <aside className="post-cta">
+              <p className="eyebrow">{dict.sections.experiences}</p>
+              <h2>{related ? dict.blog.relatedCta : dict.homeSpecialOccasions?.title}</h2>
+              <p>{related ? related.shared?.shortCopy : dict.homeSpecialOccasions?.closingLine}</p>
+              <Link href={related ? `${base}/${related.slug}` : `${base}/special-occasions`} className="btn btn--primary">
+                {related ? dict.blog.relatedCtaButton : dict.homeSpecialOccasions?.cta}
+              </Link>
+            </aside>
           </div>
         </section>
 
