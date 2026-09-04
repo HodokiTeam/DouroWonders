@@ -1,0 +1,19 @@
+# Douro Wonders
+
+> Small-group and private boat cruises on the Douro River in Porto, Portugal, departing from Douro Marina in Afurada. Two experiences — a 90-minute Day Cruise and a 2-hour Sunset Cruise — each bookable as a shared seat (up to 12 guests) or as a private charter for your own group. Every departure includes a welcome Porto Tonic and local flavours on board, hosted by locals who know the river.
+
+## Experiences
+- [Day Cruise](https://dourowonders.com/en/porto-douro-day-cruise): 90-minute small-group cruise past Porto's bridges, with a photo stop under the Ponte Dom Luís I. Shared and private options.
+- [Sunset Cruise](https://dourowonders.com/en/porto-douro-sunset-cruise): 2-hour evening cruise timed to golden hour under the Ponte Dom Luís I. Shared and private options.
+- [Special Occasions](https://dourowonders.com/en/special-occasions): private charters for proposals, anniversaries and celebrations.
+
+## Guides
+- [Blog](https://dourowonders.com/en/blog): local guides to Porto and the Douro, including the six bridges, where to watch the sunset, the Porto Tonic, the fishing village of Afurada, and how to choose between a shared and private cruise.
+
+## Practical information
+- [About](https://dourowonders.com/en/about)
+- [Contact](https://dourowonders.com/en/contact)
+- [Cancellation policy](https://dourowonders.com/en/cancellation-policy)
+- Meeting point: Douro Marina, Rua da Praia 430, Gate B, 4400-354 Vila Nova de Gaia, Portugal
+- Site available in English, Portuguese and French, at /en, /pt and /fr
+- Full sitemap: https://dourowonders.com/sitemap.xml

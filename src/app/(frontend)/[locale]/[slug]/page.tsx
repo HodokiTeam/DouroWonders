@@ -134,19 +134,26 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
             <span className="breadcrumb__sep" aria-hidden="true">/</span>
             <a href={`${base}#experiences`}>{dict.nav.experiences}</a>
             <span className="breadcrumb__sep" aria-hidden="true">/</span>
-            <span className="breadcrumb__current" aria-current="page">{exp.title}</span>
+            <span className="breadcrumb__current" aria-current="page">
+              {variant === 'private' ? exp.private?.subtitle || exp.title : exp.title}
+            </span>
             {otherExperiences.length > 0 && (
               <span className="breadcrumb__also">
                 {dict.detail.seeAlso}:{' '}
                 {otherExperiences.map((other) => (
-                  <Link key={other.id} href={`${base}/${other.slug}`}>
-                    {other.title}
+                  <Link
+                    key={other.id}
+                    href={`${base}/${other.slug}${variant === 'private' ? PRIVATE_SUFFIX : ''}`}
+                  >
+                    {variant === 'private' ? other.private?.subtitle || other.title : other.title}
                   </Link>
                 ))}
               </span>
             )}
           </nav>
-          <h1 className="exp-hero-plain__title">{exp.title}</h1>
+          <h1 className="exp-hero-plain__title">
+            {variant === 'private' ? exp.private?.subtitle || exp.title : exp.title}
+          </h1>
           <div className="exp-hero-plain__meta">
             <span className="exp-hero-plain__sub">{exp.subtitle}</span>
             {reviewCount > 0 &&
@@ -530,7 +537,12 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
               itemListElement: [
                 { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
                 { '@type': 'ListItem', position: 2, name: 'Experiences', item: `${SITE_URL}/#experiences` },
-                { '@type': 'ListItem', position: 3, name: exp.title, item: `${SITE_URL}${variant === 'private' ? privateHref : sharedHref}` },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: variant === 'private' ? exp.private?.subtitle || exp.title : exp.title,
+                  item: `${SITE_URL}${variant === 'private' ? privateHref : sharedHref}`,
+                },
               ],
             },
           ]),
