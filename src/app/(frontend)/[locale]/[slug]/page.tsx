@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://dourowonders.com'
 
 const mediaUrl = (m?: (number | null) | Media | null, fallback?: string): string => {
   if (m && typeof m === 'object' && m.url) return m.url
@@ -149,11 +149,21 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
           <h1 className="exp-hero-plain__title">{exp.title}</h1>
           <div className="exp-hero-plain__meta">
             <span className="exp-hero-plain__sub">{exp.subtitle}</span>
-            {reviewCount > 0 && (
-              <span className="exp-hero-plain__rating">
-                <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
-              </span>
-            )}
+            {reviewCount > 0 &&
+              (home?.reviewsSection?.googleReviewsUrl ? (
+                <a
+                  href={home.reviewsSection.googleReviewsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="exp-hero-plain__rating"
+                >
+                  <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
+                </a>
+              ) : (
+                <span className="exp-hero-plain__rating">
+                  <span aria-hidden="true">★</span> {avgRating.toFixed(1)} · {reviewCount} {dict.detail.reviews}
+                </span>
+              ))}
           </div>
         </div>
       </section>
@@ -335,10 +345,11 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
                 </div>
                 <RouteMap
                   labels={dict.routeMap}
-                  lockedRoute={exp.slug === 'sunset-cruise' ? 'sunset' : 'day'}
+                  // Slugs are localized now — id 2 is the fixed Sunset Cruise experience.
+                  lockedRoute={exp.id === 2 ? 'sunset' : 'day'}
                   compact
-                  dayStops={exp.slug !== 'sunset-cruise' ? d?.itinerary?.map((s) => s.stop) : undefined}
-                  sunsetStops={exp.slug === 'sunset-cruise' ? d?.itinerary?.map((s) => s.stop) : undefined}
+                  dayStops={exp.id !== 2 ? d?.itinerary?.map((s) => s.stop) : undefined}
+                  sunsetStops={exp.id === 2 ? d?.itinerary?.map((s) => s.stop) : undefined}
                 />
               </div>
             </div>

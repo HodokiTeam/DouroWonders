@@ -294,7 +294,7 @@ const en: Dictionary = {
     cta: 'Our Story',
   },
   homeReviews: {
-    eyebrow: 'Guest Stories',
+    eyebrow: 'Customer Stories',
     title: 'What guests say about Douro Wonders',
     cta: 'Read our Google reviews',
     tripadvisorCta: 'or on Tripadvisor',
@@ -489,7 +489,7 @@ const pt: Dictionary = {
     cta: 'A Nossa História',
   },
   homeReviews: {
-    eyebrow: 'Histórias de Hóspedes',
+    eyebrow: 'Histórias de Clientes',
     title: 'O que dizem sobre a Douro Wonders',
     cta: 'Ver as nossas reviews no Google',
     tripadvisorCta: 'ou no Tripadvisor',
@@ -594,8 +594,8 @@ const fr: Dictionary = {
     specialOccasions: 'Occasions Spéciales',
     dayCruise: 'Croisière de jour',
     sunsetCruise: 'Croisière au coucher du soleil',
-    dayCruiseSlug: 'day-cruise',
-    sunsetCruiseSlug: 'sunset-cruise',
+    dayCruiseSlug: 'croisiere-de-jour-douro-porto',
+    sunsetCruiseSlug: 'croisiere-coucher-de-soleil-douro-porto',
     bookNow: 'Réserver',
   },
   hero: { sharedCruise: 'Croisière partagée', privateCruise: 'Croisière privée', perPerson: 'par personne', perBoat: 'par bateau', from: 'à partir de', eyebrow: 'Le Douro — No.01' },
@@ -880,7 +880,7 @@ const es: Dictionary = {
     cta: 'Nuestra historia',
   },
   homeReviews: {
-    eyebrow: 'Historias de huéspedes',
+    eyebrow: 'Historias de clientes',
     title: 'Lo que dicen sobre Douro Wonders',
     cta: 'Ver nuestras reseñas en Google',
     tripadvisorCta: 'o en Tripadvisor',
@@ -1076,7 +1076,7 @@ const de: Dictionary = {
     cta: 'Unsere Geschichte',
   },
   homeReviews: {
-    eyebrow: 'Gästestimmen',
+    eyebrow: 'Kundenstimmen',
     title: 'Was Gäste über Douro Wonders sagen',
     cta: 'Unsere Google-Bewertungen ansehen',
     tripadvisorCta: 'oder auf Tripadvisor',

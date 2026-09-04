@@ -15,7 +15,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://dourowonders.com'
 
 const mediaUrl = (m?: (number | null) | Media | null, fallback?: string): string => {
   if (m && typeof m === 'object' && m.url) return m.url
@@ -57,9 +57,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     items: faqs.filter((f) => (f.section || 'booking') === key),
   })).filter((g) => g.items.length > 0)
 
-  // The route map labels its points from each cruise's itinerary in the CMS
-  const itineraryOf = (slug: string) =>
-    experiences.find((e) => e.slug === slug)?.details?.itinerary?.map((s) => s.stop) ?? undefined
+  // The route map labels its points from each cruise's itinerary in the CMS.
+  // Slugs are localized now, so look these two fixed experiences up by id
+  // (1 = Day Cruise, 2 = Sunset Cruise) rather than by slug.
+  const itineraryOf = (id: number) =>
+    experiences.find((e) => e.id === id)?.details?.itinerary?.map((s) => s.stop) ?? undefined
   const campaignActive = home?.campaign?.active !== false
 
   // Two category rows built from the 2 experiences (shared + private rate each)
@@ -84,7 +86,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // "Shared ..." card title, which would misleadingly label the Private card too.
   const cruiseGroups = experiences.map((exp) => ({
     key: exp.slug,
-    title: exp.slug === 'sunset-cruise' ? dict.nav.sunsetCruise : dict.nav.dayCruise,
+    // Slugs are localized now (they vary per language), so id is the only
+    // stable way to tell these two fixed experiences apart — id 2 is Sunset.
+    title: exp.id === 2 ? dict.nav.sunsetCruise : dict.nav.dayCruise,
     cards: [
       {
         key: `${exp.slug}-shared`,
@@ -301,8 +305,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
           <RouteMap
             labels={dict.routeMap}
-            dayStops={itineraryOf('day-cruise')}
-            sunsetStops={itineraryOf('sunset-cruise')}
+            dayStops={itineraryOf(1)}
+            sunsetStops={itineraryOf(2)}
           />
           <p className="route__note" style={{ textAlign: 'center' }}>
             {home?.route?.note || 'The route may vary depending on river, weather and safety conditions.'}

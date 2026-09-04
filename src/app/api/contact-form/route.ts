@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   // Bot filled the hidden field — accept silently and drop it.
   if (honeypot) return NextResponse.json({ ok: true })
 
-  if (!name || !email || !message) {
+  if (!name || !email || !phone || !message) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

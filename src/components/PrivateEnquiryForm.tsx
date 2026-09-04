@@ -93,8 +93,8 @@ export function PrivateEnquiryForm({
       </div>
       <div className="contact-form__row">
         <label>
-          {contactDict.phoneOptional}
-          <input name="phone" type="tel" autoComplete="tel" placeholder={contactDict.phonePlaceholder} />
+          {contactDict.phone}
+          <input name="phone" type="tel" required autoComplete="tel" placeholder={contactDict.phonePlaceholder} />
         </label>
         <label>
           {dict.cruise}

@@ -14,7 +14,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://dourowonders.com'
 
 const mediaUrl = (m?: (number | null) | Media | null, fallback?: string): string => {
   if (m && typeof m === 'object' && m.url) return m.url

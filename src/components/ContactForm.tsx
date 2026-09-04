@@ -73,8 +73,8 @@ export function ContactForm({
         </label>
       </div>
       <label>
-        {dict.phoneOptional}
-        <input name="phone" type="tel" autoComplete="tel" placeholder={dict.phonePlaceholder} />
+        {dict.phone}
+        <input name="phone" type="tel" required autoComplete="tel" placeholder={dict.phonePlaceholder} />
       </label>
       <label>
         {dict.subject}

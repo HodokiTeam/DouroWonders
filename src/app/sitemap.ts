@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { activeLocales, localeTags } from '@/i18n/config'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://dourowonders.com'
 
 /** Builds one entry per locale, each listing the other locales as alternates. */
 function localizedEntries(

@@ -16,7 +16,7 @@ const poppins = Poppins({
   display: 'swap',
 })
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.dourowonders.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://dourowonders.com'
 
 export function generateStaticParams() {
   return activeLocales.map((locale) => ({ locale }))

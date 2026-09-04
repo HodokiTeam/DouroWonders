@@ -8,7 +8,7 @@ export type Locale = (typeof locales)[number]
  * content in the other languages ahead of time; flip this list (and
  * redeploy) whenever the founders want to switch one on.
  */
-export const activeLocales: Locale[] = ['en', 'pt']
+export const activeLocales: Locale[] = ['en', 'pt', 'fr']
 
 export const defaultLocale: Locale = 'en'
 
